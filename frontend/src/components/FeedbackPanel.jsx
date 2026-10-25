@@ -3,11 +3,11 @@ import { ThumbsUp, Check, AlertCircle, Send, Sparkles } from 'lucide-react';
 import { apiClient } from '../api/client';
 
 const RATINGS = [
-  { value: 'correct', label: 'Correct', color: '#10b981' },
-  { value: 'mostly_correct', label: 'Mostly Correct', color: '#34d399' },
-  { value: 'partially_correct', label: 'Partially Correct', color: '#f59e0b' },
-  { value: 'mostly_incorrect', label: 'Mostly Incorrect', color: '#f97316' },
-  { value: 'completely_incorrect', label: 'Completely Incorrect', color: '#ef4444' },
+  { value: 'correct', label: 'Correct' },
+  { value: 'mostly_correct', label: 'Mostly Correct' },
+  { value: 'partially_correct', label: 'Partially Correct' },
+  { value: 'mostly_incorrect', label: 'Mostly Incorrect' },
+  { value: 'completely_incorrect', label: 'Completely Incorrect' },
 ];
 
 export default function FeedbackPanel({ queryId, onFeedbackSubmitted }) {
@@ -42,7 +42,7 @@ export default function FeedbackPanel({ queryId, onFeedbackSubmitted }) {
   if (submitted) {
     return (
       <div className="glass-panel" style={{ padding: '20px', marginTop: '20px', textAlign: 'center' }}>
-        <div style={{ color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontWeight: 600 }}>
+        <div style={{ color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontWeight: 600 }}>
           <Check size={20} /> Thank you! Your feedback has been persistently recorded.
         </div>
         <p style={{ marginTop: '6px', fontSize: '0.85rem' }}>
@@ -55,11 +55,11 @@ export default function FeedbackPanel({ queryId, onFeedbackSubmitted }) {
   return (
     <div className="glass-panel" style={{ padding: '24px', marginTop: '20px' }}>
       <h3 style={{ fontSize: '1rem', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <ThumbsUp size={18} color="#60a5fa" /> Rate Answer & Provide Feedback
+        <ThumbsUp size={18} /> Rate Answer & Provide Feedback
       </h3>
 
       {error && (
-        <div style={{ padding: '10px 14px', background: 'rgba(239, 68, 68, 0.15)', color: '#f87171', borderRadius: 'var(--radius-md)', marginBottom: '16px', fontSize: '0.85rem' }}>
+        <div style={{ padding: '10px 14px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--border-color)', color: 'var(--text-primary)', borderRadius: 'var(--radius-md)', marginBottom: '16px', fontSize: '0.85rem' }}>
           {error}
         </div>
       )}
@@ -77,9 +77,9 @@ export default function FeedbackPanel({ queryId, onFeedbackSubmitted }) {
                 style={{
                   padding: '8px 14px',
                   borderRadius: 'var(--radius-md)',
-                  border: isSelected ? `2px solid ${r.color}` : '1px solid var(--border-color)',
-                  background: isSelected ? `${r.color}20` : 'var(--bg-surface-elevated)',
-                  color: isSelected ? 'var(--text-primary)' : 'var(--text-secondary)',
+                  border: isSelected ? '1px solid var(--border-focus)' : '1px solid var(--border-color)',
+                  background: isSelected ? 'var(--text-primary)' : 'var(--bg-surface-elevated)',
+                  color: isSelected ? 'var(--text-inverted)' : 'var(--text-secondary)',
                   fontWeight: isSelected ? 600 : 500,
                   fontSize: '0.85rem',
                   cursor: 'pointer',

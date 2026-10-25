@@ -57,6 +57,88 @@ def parse_obsidian_markdown(text: str) -> Dict[str, Any]:
     }
 
 
+GENERIC_LABEL_REGEX = re.compile(
+    r"^(page\s*\d+|section\s*\d+|part\s*\d+|chapter\s*\d+|slide\s*\d+|unit\s*\d+|\d+|full text|document content|introduction|overview|untitled)$",
+    re.IGNORECASE,
+)
+
+STOP_STARTERS = {"and", "or", "the", "this", "that", "they", "we", "you", "it", "if", "when", "please", "for", "with", "from", "in", "on", "at", "by", "to"}
+
+
+def is_clean_concept_label(text: str) -> bool:
+    if not text:
+        return False
+    text = text.strip(" \t\r\n.,;:!?-–—*#•▸\"'")
+    if len(text) < 3 or len(text) > 60:
+        return False
+    if GENERIC_LABEL_REGEX.match(text):
+        return False
+    words = text.split()
+    if len(words) < 1 or len(words) > 7:
+        return False
+    if words[0].lower() in STOP_STARTERS:
+        return False
+    if text.endswith((".", ":", ";", "!", "?")):
+        return False
+    if any(char in text for char in ["http", "www.", "@", "{", "}", "\\", "/"]):
+        return False
+    return True
+
+
+def extract_concepts_from_chunk(text: str, section_title: Optional[str] = None) -> List[str]:
+    """
+    Extracts high-quality semantic concept titles, project names, skills, and topics.
+    Works seamlessly across Markdown, PDFs, resumes, textbooks, and notes.
+    """
+    candidates: List[str] = []
+
+    # 1. Section title if not generic
+    if section_title and is_clean_concept_label(section_title):
+        candidates.append(section_title.strip())
+
+    # 2. Markdown headings (# Heading, ## Subheading)
+    for line in text.splitlines():
+        line_s = line.strip()
+        if line_s.startswith("#"):
+            h = line_s.lstrip("# \t").strip()
+            if is_clean_concept_label(h):
+                candidates.append(h)
+
+        # 3. Project or title pattern: 'Name — Tech · Tech' or 'Name - Subtitle'
+        elif "—" in line_s or " - " in line_s:
+            parts = re.split(r"\s*[—–-]\s*", line_s, maxsplit=1)
+            title = parts[0].strip("▸•*# \t")
+            if is_clean_concept_label(title):
+                candidates.append(title)
+                if len(parts) > 1:
+                    sub_items = [s.strip() for s in re.split(r"[·,;|]", parts[1]) if s.strip()]
+                    for item in sub_items[:3]:
+                        if is_clean_concept_label(item):
+                            candidates.append(item)
+
+        # 4. Prominent section names in ALL CAPS: 'TECHNICAL SKILLS', 'EDUCATION', 'PROJECTS'
+        elif line_s.isupper() and is_clean_concept_label(line_s):
+            candidates.append(line_s.title())
+
+        # 5. Bullet item with prefix topic: '▸ ML Pipeline: Built...'
+        elif line_s.startswith(("▸", "•", "*", "-")):
+            bullet_body = line_s.lstrip("▸•*- \t")
+            if ":" in bullet_body:
+                prefix = bullet_body.split(":", 1)[0].strip()
+                if is_clean_concept_label(prefix):
+                    candidates.append(prefix)
+
+    # De-duplicate preserving order
+    seen: Set[str] = set()
+    result: List[str] = []
+    for c in candidates:
+        key = c.lower()
+        if key not in seen:
+            seen.add(key)
+            result.append(c[:60])
+    return result
+
+
 def extract_structural_concept_graph(document_id: str, db: Session) -> int:
     """
     Extracts Obsidian-style concept nodes, containment hierarchy, and wikilink connections
@@ -90,29 +172,36 @@ def extract_structural_concept_graph(document_id: str, db: Session) -> int:
     prev_concept_id = None
     seen_labels: Set[str] = set()
 
-    for c in chunks:
+    # For large documents (e.g. textbooks with hundreds of chunks), sample strategically
+    if len(chunks) > 100:
+        sampled_chunks = chunks[:25] + chunks[25::15][:60]
+    else:
+        sampled_chunks = chunks
+
+    for c in sampled_chunks:
         text = c.text_content or ""
         parsed = parse_obsidian_markdown(text)
 
-        # Candidate label from section_title or first heading
-        label = (c.section_title or "").strip()
-        if not label or label.lower() in ["section", "page", "full text", "document content"]:
-            if parsed["headings"]:
-                label = parsed["headings"][0]["title"]
-            else:
-                lines = [l.strip("#* \t") for l in text.split("\n") if l.strip("#* \t")]
-                if lines:
-                    candidate = lines[0][:50]
-                    if len(candidate) > 3 and not candidate.startswith("http"):
-                        label = candidate
+        # Extract semantic concepts
+        extracted_concepts = extract_concepts_from_chunk(text, c.section_title)
 
-        if label:
-            clean_label = label[:60].strip()
-            if clean_label.lower() not in seen_labels:
-                seen_labels.add(clean_label.lower())
+        # If no explicit headings/patterns found, extract prominent title line
+        if not extracted_concepts:
+            for line in text.split("\n"):
+                candidate = line.strip("#* \t")
+                if is_clean_concept_label(candidate):
+                    extracted_concepts.append(candidate)
+                    break
+
+        for clean_label in extracted_concepts:
+            key = clean_label.lower()
+            if key not in seen_labels:
+                seen_labels.add(key)
                 existing_node = db.query(GraphNode).filter(GraphNode.label.ilike(clean_label)).first()
                 if existing_node:
                     concept_id = existing_node.node_id
+                    if not existing_node.source_document_id:
+                        existing_node.source_document_id = document_id
                 else:
                     concept_id = f"concept_{uuid.uuid4().hex[:10]}"
                     new_node = GraphNode(
@@ -125,10 +214,9 @@ def extract_structural_concept_graph(document_id: str, db: Session) -> int:
                         verification_status=GraphVerificationStatus.UNEVALUATED.value,
                     )
                     db.add(new_node)
-                    db.commit()
                     created_count += 1
 
-                concept_id_by_label[clean_label.lower()] = concept_id
+                concept_id_by_label[key] = concept_id
 
                 # Edge: Document contains Concept
                 edge_exists = db.query(GraphEdge).filter(
@@ -165,8 +253,11 @@ def extract_structural_concept_graph(document_id: str, db: Session) -> int:
         # 2. Process Wikilinks [[Target]]
         for wl in parsed["wikilinks"]:
             target_label = wl["target"][:60].strip()
-            if target_label.lower() not in seen_labels:
-                seen_labels.add(target_label.lower())
+            if not is_clean_concept_label(target_label):
+                continue
+            t_key = target_label.lower()
+            if t_key not in seen_labels:
+                seen_labels.add(t_key)
                 existing_wl_node = db.query(GraphNode).filter(GraphNode.label.ilike(target_label)).first()
                 if existing_wl_node:
                     wl_node_id = existing_wl_node.node_id
@@ -180,11 +271,10 @@ def extract_structural_concept_graph(document_id: str, db: Session) -> int:
                         source_document_id=document_id,
                         verification_status=GraphVerificationStatus.UNEVALUATED.value,
                     ))
-                    db.commit()
                     created_count += 1
-                concept_id_by_label[target_label.lower()] = wl_node_id
+                concept_id_by_label[t_key] = wl_node_id
 
-            target_id = concept_id_by_label.get(target_label.lower())
+            target_id = concept_id_by_label.get(t_key)
             if prev_concept_id and target_id and prev_concept_id != target_id:
                 wl_edge_exists = db.query(GraphEdge).filter(
                     GraphEdge.source_node_id == prev_concept_id,

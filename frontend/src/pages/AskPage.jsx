@@ -24,21 +24,21 @@ const SUGGESTED_PROMPTS = [
     prefix: "Explain how ",
     highlight: "heuristic consistency",
     suffix: " guarantees optimality in A* graph search.",
-    markerColor: "#facc15",
+    markerColor: "rgba(255, 255, 255, 0.95)",
   },
   {
     category: "Hybrid Retrieval",
     prefix: "How does ",
     highlight: "hybrid evidence retrieval",
     suffix: " fuse BM25 keyword search with ChromaDB vectors?",
-    markerColor: "#38bdf8",
+    markerColor: "rgba(255, 255, 255, 0.95)",
   },
   {
     category: "Knowledge Graphs",
     prefix: "What role does ",
     highlight: "neuro-symbolic graph grounding",
     suffix: " play in eliminating LLM hallucinations?",
-    markerColor: "#34d399",
+    markerColor: "rgba(255, 255, 255, 0.95)",
   },
 ];
 
@@ -63,8 +63,8 @@ function FormattedGroundedAnswer({ text }) {
             <CursorMarkerHighlight
               key={index}
               highlight={part}
-              markerColor="#38bdf8"
-              highlightedTextColor="#0f172a"
+              markerColor="rgba(255, 255, 255, 0.92)"
+              highlightedTextColor="#000000"
               style={{ fontWeight: 600, margin: '0 2px' }}
             />
           );
@@ -76,8 +76,8 @@ function FormattedGroundedAnswer({ text }) {
             <CursorMarkerHighlight
               key={index}
               highlight={part}
-              markerColor="#34d399"
-              highlightedTextColor="#064e3b"
+              markerColor="rgba(255, 255, 255, 0.92)"
+              highlightedTextColor="#000000"
               style={{ fontWeight: 600, margin: '0 2px' }}
             />
           );
@@ -90,8 +90,8 @@ function FormattedGroundedAnswer({ text }) {
             <CursorMarkerHighlight
               key={index}
               highlight={innerTerm}
-              markerColor="#facc15"
-              highlightedTextColor="#171717"
+              markerColor="rgba(255, 255, 255, 0.92)"
+              highlightedTextColor="#000000"
               style={{ fontWeight: 600 }}
             />
           );
@@ -171,7 +171,7 @@ export default function AskPage() {
       <div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
           <span className="bento-capsule">
-            <span className="bento-capsule-dot" style={{ background: '#facc15' }} />
+            <span className="bento-capsule-dot" style={{ background: 'var(--text-primary)' }} />
             Grounded Q&A Engine
           </span>
           <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
@@ -180,13 +180,13 @@ export default function AskPage() {
         </div>
         <h1>
           Ask & Inquire with{' '}
-          <CursorMarkerHighlight highlight="Verified Grounding" markerColor="#facc15" />
+          <CursorMarkerHighlight highlight="Verified Grounding" markerColor="rgba(255, 255, 255, 0.95)" highlightedTextColor="#000000" />
         </h1>
         <p style={{ marginTop: '6px' }}>
           Ask questions from your indexed course documents. Answers are strictly synthesized against{' '}
-          <CursorMarkerHighlight highlight="retrieved evidence" markerColor="#38bdf8" highlightedTextColor="#0f172a" />{' '}
+          <CursorMarkerHighlight highlight="retrieved evidence" markerColor="rgba(255, 255, 255, 0.95)" highlightedTextColor="#000000" />{' '}
           and prior{' '}
-          <CursorMarkerHighlight highlight="verified lessons" markerColor="#34d399" highlightedTextColor="#064e3b" />.
+          <CursorMarkerHighlight highlight="verified lessons" markerColor="rgba(255, 255, 255, 0.95)" highlightedTextColor="#000000" />.
         </p>
       </div>
 
@@ -203,7 +203,7 @@ export default function AskPage() {
             color: 'var(--text-muted)',
             fontWeight: 600,
           }}>
-            <Lightbulb size={14} color="#facc15" /> Suggested Queries (Hover to Highlight)
+            <Lightbulb size={14} color="var(--text-primary)" /> Suggested Queries (Hover to Highlight)
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px' }}>
             {SUGGESTED_PROMPTS.map((item, idx) => (
@@ -231,8 +231,8 @@ export default function AskPage() {
                   {item.prefix}
                   <CursorMarkerHighlight
                     highlight={item.highlight}
-                    markerColor={item.markerColor}
-                    highlightedTextColor={item.markerColor === '#34d399' ? '#064e3b' : item.markerColor === '#38bdf8' ? '#0f172a' : '#171717'}
+                    markerColor="rgba(255, 255, 255, 0.92)"
+                    highlightedTextColor="#000000"
                   />
                   {item.suffix}
                 </div>
@@ -321,16 +321,16 @@ export default function AskPage() {
       {error && (
         <div style={{
           padding: '14px 18px',
-          background: 'rgba(239, 68, 68, 0.12)',
-          border: '1px solid rgba(239, 68, 68, 0.28)',
+          background: 'rgba(255, 255, 255, 0.05)',
+          border: '1px solid var(--border-color)',
           borderRadius: 'var(--radius-md)',
-          color: '#f87171',
+          color: 'var(--text-primary)',
           fontSize: '0.9rem',
           display: 'flex',
           alignItems: 'center',
           gap: '10px'
         }}>
-          <AlertTriangle size={20} />
+          <AlertTriangle size={20} style={{ opacity: 0.8 }} />
           <div>{error}</div>
         </div>
       )}
@@ -349,14 +349,14 @@ export default function AskPage() {
             background: 'var(--bg-surface-elevated)',
             marginBottom: '16px'
           }}>
-            <Sparkles size={22} className="animate-spin" color="#facc15" />
+            <Sparkles size={22} className="animate-spin" color="var(--text-primary)" />
           </div>
           <div style={{ fontWeight: 600, fontSize: '1.05rem', color: 'var(--text-primary)', marginBottom: '6px' }}>
             Synthesizing Grounded Answer
           </div>
           <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
             Querying dual retrieval lanes (BM25 + ChromaDB) and scanning{' '}
-            <CursorMarkerHighlight highlight="verified pedagogical memory" markerColor="#34d399" highlightedTextColor="#064e3b" />...
+            <CursorMarkerHighlight highlight="verified pedagogical memory" markerColor="rgba(255, 255, 255, 0.95)" highlightedTextColor="#000000" />...
           </div>
         </div>
       )}
@@ -402,16 +402,16 @@ export default function AskPage() {
           {currentQuery.is_insufficient_evidence && (
             <div style={{
               padding: '14px 18px',
-              background: 'rgba(245, 158, 11, 0.12)',
-              border: '1px solid rgba(245, 158, 11, 0.28)',
+              background: 'rgba(255, 255, 255, 0.05)',
+              border: '1px solid var(--border-color)',
               borderRadius: 'var(--radius-md)',
-              color: '#fbbf24',
+              color: 'var(--text-primary)',
               display: 'flex',
               alignItems: 'center',
               gap: '12px',
               fontSize: '0.88rem'
             }}>
-              <AlertTriangle size={20} />
+              <AlertTriangle size={20} style={{ opacity: 0.8 }} />
               <div>
                 <span style={{ fontWeight: 600 }}>Insufficient Context Notice: </span>
                 Retrieved chunks exhibit weak relevance. The model has avoided hallucinating and strictly notes the absence of direct documentation.
@@ -462,7 +462,7 @@ export default function AskPage() {
                   className="btn btn-secondary"
                   style={{ padding: '5px 12px', fontSize: '0.75rem' }}
                 >
-                  {copied ? <Check size={13} color="#34d399" /> : <Copy size={13} />}
+                  {copied ? <Check size={13} /> : <Copy size={13} />}
                   {copied ? 'Copied' : 'Copy Text'}
                 </button>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>

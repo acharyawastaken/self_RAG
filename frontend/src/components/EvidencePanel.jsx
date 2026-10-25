@@ -28,7 +28,7 @@ export default function EvidencePanel({ evidence = [], lessonsUsed = [] }) {
         }}
       >
         <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <BookOpen size={16} color="#60a5fa" />
+          <BookOpen size={16} />
           Retrieved Evidence & Verified Lessons ({evidence.length + lessonsUsed.length})
         </span>
         {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -42,7 +42,7 @@ export default function EvidencePanel({ evidence = [], lessonsUsed = [] }) {
               <div style={{ 
                 fontSize: '0.75rem', 
                 textTransform: 'uppercase', 
-                color: '#34d399', 
+                color: 'var(--text-primary)', 
                 fontWeight: 700, 
                 letterSpacing: '0.05em', 
                 marginBottom: '8px',
@@ -57,12 +57,12 @@ export default function EvidencePanel({ evidence = [], lessonsUsed = [] }) {
                   <div key={l.lesson_id} style={{
                     padding: '12px 14px',
                     borderRadius: 'var(--radius-md)',
-                    background: 'rgba(16, 185, 129, 0.08)',
-                    border: '1px solid rgba(16, 185, 129, 0.25)',
+                    background: 'var(--bg-surface-elevated)',
+                    border: '1px solid var(--border-color)',
                     fontSize: '0.85rem'
                   }}>
                     <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <CursorMarkerHighlight highlight={`[L${idx + 1}]`} markerColor="#34d399" highlightedTextColor="#064e3b" />
+                      <CursorMarkerHighlight highlight={`[L${idx + 1}]`} markerColor="rgba(255, 255, 255, 0.95)" highlightedTextColor="#000000" />
                       <span>{l.title}</span>
                     </div>
                     <div style={{ color: 'var(--text-secondary)' }}>
@@ -104,7 +104,7 @@ export default function EvidencePanel({ evidence = [], lessonsUsed = [] }) {
                       color: 'var(--text-muted)'
                     }}>
                       <span style={{ fontWeight: 600, color: 'var(--text-primary)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                        <CursorMarkerHighlight highlight={`[C${c.rank_position}]`} markerColor="#38bdf8" highlightedTextColor="#0f172a" />
+                        <CursorMarkerHighlight highlight={`[C${c.rank_position}]`} markerColor="rgba(255, 255, 255, 0.95)" highlightedTextColor="#000000" />
                         <span>{c.filename} {c.section_title ? `• ${c.section_title}` : ''} {c.page_start ? `(p. ${c.page_start})` : ''}</span>
                       </span>
                       <span>Similarity: {(c.similarity_score * 100).toFixed(1)}%</span>

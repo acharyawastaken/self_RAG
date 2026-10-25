@@ -85,7 +85,7 @@ export default function ReviewPage() {
             border: activeTab === 'proposals' ? '1px solid var(--border-color)' : '1px solid transparent',
           }}
         >
-          <Clock size={16} color="#fbbf24" />
+          <Clock size={16} />
           Pending Proposals ({pendingProposals.length})
         </button>
         <button
@@ -97,7 +97,7 @@ export default function ReviewPage() {
             border: activeTab === 'lessons' ? '1px solid var(--border-color)' : '1px solid transparent',
           }}
         >
-          <Sparkles size={16} color="#34d399" />
+          <Sparkles size={16} />
           Active Verified Lessons ({lessons.length})
         </button>
       </div>
@@ -105,8 +105,9 @@ export default function ReviewPage() {
       {error && (
         <div style={{
           padding: '12px 16px',
-          background: 'rgba(239, 68, 68, 0.15)',
-          color: '#f87171',
+          background: 'rgba(255, 255, 255, 0.05)',
+          color: 'var(--text-primary)',
+          border: '1px solid var(--border-color)',
           borderRadius: 'var(--radius-md)',
           marginBottom: '20px',
         }}>
@@ -123,7 +124,7 @@ export default function ReviewPage() {
             </div>
           ) : pendingProposals.length === 0 ? (
             <div className="glass-panel" style={{ padding: '48px 24px', textAlign: 'center', color: 'var(--text-muted)' }}>
-              <CheckCircle2 size={40} style={{ margin: '0 auto 12px auto', color: '#10b981', opacity: 0.8 }} />
+              <CheckCircle2 size={40} style={{ margin: '0 auto 12px auto', color: 'var(--text-primary)', opacity: 0.8 }} />
               <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px' }}>Review Queue Clear</div>
               <p style={{ fontSize: '0.85rem' }}>No correction proposals currently awaiting verification. Negative student ratings will automatically populate proposals here.</p>
             </div>
@@ -139,9 +140,9 @@ export default function ReviewPage() {
                         <span style={{
                           padding: '4px 10px',
                           borderRadius: 'var(--radius-full)',
-                          background: 'rgba(239, 68, 68, 0.15)',
-                          color: '#f87171',
-                          border: '1px solid rgba(239, 68, 68, 0.3)',
+                          background: 'rgba(255, 255, 255, 0.08)',
+                          color: 'var(--text-primary)',
+                          border: '1px solid var(--border-color)',
                           fontSize: '0.75rem',
                           fontWeight: 700,
                           textTransform: 'uppercase',
@@ -180,7 +181,7 @@ export default function ReviewPage() {
                               background: 'var(--bg-surface-elevated)',
                               border: '1px solid var(--border-color)',
                               fontSize: '0.8rem',
-                              color: '#93c5fd'
+                              color: 'var(--text-secondary)'
                             }}>
                               #{concept}
                             </span>
@@ -192,12 +193,12 @@ export default function ReviewPage() {
                     {/* Proposed Correction */}
                     <div style={{
                       padding: '16px',
-                      background: 'rgba(59, 130, 246, 0.08)',
-                      border: '1px solid rgba(59, 130, 246, 0.25)',
+                      background: 'var(--bg-surface-elevated)',
+                      border: '1px solid var(--border-color)',
                       borderRadius: 'var(--radius-md)',
                       marginBottom: '20px'
                     }}>
-                      <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: '#60a5fa', fontWeight: 700, marginBottom: '6px' }}>
+                      <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 700, marginBottom: '6px' }}>
                         Proposed Fact / Lesson
                       </div>
                       {isEditing ? (
@@ -306,7 +307,7 @@ export default function ReviewPage() {
                   border: '1px solid var(--border-color)',
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <div style={{ fontWeight: 600, color: '#34d399', fontSize: '1rem' }}>
+                    <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '1rem' }}>
                       {l.title}
                     </div>
                     <StatusBadge status="verified" />

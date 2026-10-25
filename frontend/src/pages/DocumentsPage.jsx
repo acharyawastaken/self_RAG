@@ -91,24 +91,24 @@ export default function DocumentsPage() {
         <h1>Document Library</h1>
         <p>
           Upload lecture notes, textbooks, and course guides. Text is automatically chunked, embedded, and mapped into the{' '}
-          <CursorMarkerHighlight highlight="knowledge graph" markerColor="#facc15" />.
+          <CursorMarkerHighlight highlight="knowledge graph" markerColor="rgba(255, 255, 255, 0.95)" highlightedTextColor="#000000" />.
         </p>
       </div>
 
       {error && (
         <div style={{
           padding: '12px 16px',
-          background: 'rgba(239, 68, 68, 0.15)',
-          border: '1px solid rgba(239, 68, 68, 0.3)',
+          background: 'rgba(255, 255, 255, 0.05)',
+          border: '1px solid var(--border-color)',
           borderRadius: 'var(--radius-md)',
-          color: '#f87171',
+          color: 'var(--text-primary)',
           marginBottom: '20px',
           fontSize: '0.9rem',
           display: 'flex',
           alignItems: 'center',
           gap: '8px'
         }}>
-          <AlertCircle size={18} /> {error}
+          <AlertCircle size={18} style={{ opacity: 0.8 }} /> {error}
         </div>
       )}
 
@@ -140,12 +140,13 @@ export default function DocumentsPage() {
           width: '56px',
           height: '56px',
           borderRadius: 'var(--radius-full)',
-          background: 'rgba(59, 130, 246, 0.1)',
+          background: 'var(--bg-capsule)',
+          border: '1px solid var(--border-color)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           margin: '0 auto 16px auto',
-          color: '#60a5fa'
+          color: 'var(--text-primary)'
         }}>
           {uploading ? <Loader2 size={28} className="animate-spin" /> : <UploadCloud size={28} />}
         </div>
@@ -194,7 +195,7 @@ export default function DocumentsPage() {
                 {documents.map((doc) => (
                   <tr key={doc.document_id} style={{ borderBottom: '1px solid var(--border-color)', transition: 'background 0.15s' }}>
                     <td style={{ padding: '16px 24px', fontWeight: 600, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <FileCheck size={18} color="#60a5fa" />
+                      <FileCheck size={18} style={{ opacity: 0.85 }} />
                       {doc.filename}
                     </td>
                     <td style={{ padding: '16px 20px', color: 'var(--text-secondary)', textTransform: 'uppercase', fontSize: '0.8rem' }}>
@@ -274,7 +275,7 @@ export default function DocumentsPage() {
           }}>
             <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ fontWeight: 600, fontSize: '1.1rem' }}>
-                Chunks for: <span style={{ color: '#60a5fa' }}>{activeDocName}</span> ({selectedDocChunks.length})
+                Chunks for: <span style={{ textDecoration: 'underline', textUnderlineOffset: '4px' }}>{activeDocName}</span> ({selectedDocChunks.length})
               </div>
               <button onClick={() => setSelectedDocChunks(null)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
                 <X size={20} />
@@ -290,7 +291,7 @@ export default function DocumentsPage() {
                   fontSize: '0.85rem'
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', color: 'var(--text-muted)', fontSize: '0.75rem' }}>
-                    <span style={{ fontWeight: 600, color: '#60a5fa' }}>
+                    <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
                       Chunk #{c.chunk_index} {c.section_title ? `• ${c.section_title}` : ''} {c.page_start ? `(p. ${c.page_start})` : ''}
                     </span>
                     <span>{c.token_count} tokens</span>

@@ -162,7 +162,7 @@ def view_standalone_graph():
       top: 20px;
       left: 24px;
       z-index: 10;
-      background: rgba(11, 15, 23, 0.85);
+      background: rgba(11, 15, 23, 0.88);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       border: 1px solid rgba(255, 255, 255, 0.12);
@@ -200,7 +200,7 @@ def view_standalone_graph():
       background: rgba(255, 255, 255, 0.07);
       border: 1px solid rgba(255, 255, 255, 0.15);
       color: #f8fafc;
-      padding: 6px 12px;
+      padding: 6px 14px;
       border-radius: 8px;
       font-size: 0.78rem;
       font-weight: 500;
@@ -209,48 +209,67 @@ def view_standalone_graph():
       align-items: center;
       gap: 6px;
       transition: all 0.2s ease;
+      font-family: inherit;
     }
     .btn:hover {
       background: rgba(255, 255, 255, 0.15);
       border-color: rgba(255, 255, 255, 0.3);
     }
     .btn.active {
-      background: rgba(255, 255, 255, 0.22);
-      border-color: rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.24);
+      border-color: rgba(255, 255, 255, 0.6);
       color: #ffffff;
+    }
+    .btn-primary {
+      background: #f8fafc;
+      color: #080c14;
+      border-color: #f8fafc;
+      font-weight: 600;
+    }
+    .btn-primary:hover {
+      background: #e2e8f0;
+      color: #080c14;
     }
     .hud-legend {
       position: absolute;
       bottom: 24px;
       left: 24px;
       z-index: 10;
-      background: rgba(11, 15, 23, 0.85);
+      background: rgba(11, 15, 23, 0.88);
       backdrop-filter: blur(14px);
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 14px;
-      padding: 12px 18px;
+      padding: 14px 18px;
       font-size: 0.75rem;
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      gap: 8px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
+    .legend-title {
+      font-weight: 600;
+      color: #f8fafc;
+      margin-bottom: 2px;
+      font-size: 0.78rem;
+      letter-spacing: 0.02em;
     }
     .legend-item {
       display: flex;
       align-items: center;
-      gap: 8px;
-      color: #94a3b8;
+      gap: 10px;
+      color: #cbd5e1;
     }
     .legend-dot {
-      width: 8px;
-      height: 8px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
+      flex-shrink: 0;
     }
     .hud-inspector {
       position: absolute;
       top: 20px;
       right: 24px;
-      width: 320px;
+      width: 330px;
       max-height: calc(100vh - 48px);
       overflow-y: auto;
       z-index: 10;
@@ -258,7 +277,7 @@ def view_standalone_graph():
       backdrop-filter: blur(16px);
       border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 18px;
-      padding: 20px;
+      padding: 22px;
       display: none;
       flex-direction: column;
       gap: 14px;
@@ -290,12 +309,69 @@ def view_standalone_graph():
       font-size: 1.2rem;
     }
     .close-btn:hover { color: #fff; }
+
+    /* Loading Overlay */
+    #loading-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(8, 12, 20, 0.92);
+      backdrop-filter: blur(8px);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      transition: opacity 0.4s ease;
+    }
+    .spinner-ring {
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-top-color: #818cf8;
+      border-right-color: #10b981;
+      border-radius: 50%;
+      animation: spin 0.9s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .loader-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #f8fafc;
+      letter-spacing: -0.01em;
+    }
+    .loader-status {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .loader-error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 12px;
+      padding: 16px 20px;
+      max-width: 420px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
   <div id="graph-container"></div>
 
-  <!-- Top Header HUD -->
+  <!-- Loading & Status Overlay -->
+  <div id="loading-overlay">
+    <div class="spinner-ring" id="loader-spinner"></div>
+    <div class="loader-title">Obsidian 3D Knowledge Graph</div>
+    <div class="loader-status" id="loader-status">Connecting to Graph API...</div>
+    <div class="loader-error" id="loader-error" style="display:none;">
+      <p id="loader-error-msg" style="color: #fca5a5; margin-bottom: 14px; font-size: 0.85rem; line-height: 1.5;"></p>
+      <button class="btn btn-primary" onclick="fetchAndRenderGraph()" style="margin: 0 auto;">Retry Connection</button>
+    </div>
+  </div>
+
+  <!-- Top Header HUD (Monochrome Bento Style) -->
   <div class="hud-header">
     <div class="hud-title">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
@@ -309,17 +385,17 @@ def view_standalone_graph():
     </div>
   </div>
 
-  <!-- Legend HUD -->
+  <!-- Legend HUD (Monochrome Bento Capsule with Color-Coded Art Key) -->
   <div class="hud-legend">
-    <div style="font-weight: 600; color: #f8fafc; margin-bottom: 2px;">Verification Statuses</div>
-    <div class="legend-item"><span class="legend-dot" style="background:#10b981;"></span> Verified Note</div>
-    <div class="legend-item"><span class="legend-dot" style="background:#3b82f6;"></span> Updated After Feedback</div>
-    <div class="legend-item"><span class="legend-dot" style="background:#f59e0b;"></span> Pending Correction</div>
-    <div class="legend-item"><span class="legend-dot" style="background:#ef4444;"></span> Suspected Problem</div>
-    <div class="legend-item"><span class="legend-dot" style="background:#94a3b8;"></span> Unevaluated</div>
+    <div class="legend-title">3D Graph Art Color Coding</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#10b981; box-shadow: 0 0 8px #10b981;"></span> Verified Note</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#06b6d4; box-shadow: 0 0 8px #06b6d4;"></span> Updated After Feedback</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#f59e0b; box-shadow: 0 0 8px #f59e0b;"></span> Pending Review</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#ef4444; box-shadow: 0 0 8px #ef4444;"></span> Suspected Problem</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#818cf8; box-shadow: 0 0 8px #818cf8;"></span> Unevaluated</div>
   </div>
 
-  <!-- Inspector Drawer -->
+  <!-- Inspector Drawer (Monochrome Bento Style) -->
   <div class="hud-inspector" id="inspector">
     <button class="close-btn" id="inspector-close">&times;</button>
     <div style="font-size: 0.72rem; text-transform: uppercase; color: #94a3b8; letter-spacing: 0.1em;" id="inspector-type">Entity Details</div>
@@ -332,24 +408,26 @@ def view_standalone_graph():
   </div>
 
   <script>
+    // Vivid Color Palette for 3D Graph Art
     const STATUS_COLORS = {
-      unevaluated: '#94a3b8',
-      suspected_problem: '#ef4444',
-      pending_correction: '#f59e0b',
-      verified: '#10b981',
-      updated_after_feedback: '#3b82f6'
+      verified: '#10b981',             // Luminous Emerald Green
+      updated_after_feedback: '#06b6d4', // Luminous Electric Cyan
+      pending_correction: '#f59e0b',     // Radiant Amber
+      suspected_problem: '#ef4444',      // Radiant Crimson Red
+      unevaluated: '#818cf8'             // Luminous Iris Violet (Nebula glow)
     };
 
     function createTextSprite(text, color) {
       const canvas = document.createElement('canvas');
-      canvas.width = 384;
-      canvas.height = 80;
+      canvas.width = 400;
+      canvas.height = 90;
       const ctx = canvas.getContext('2d');
       ctx.fillStyle = 'rgba(0, 0, 0, 0)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      ctx.fillStyle = 'rgba(11, 15, 23, 0.75)';
-      const radius = 16;
+      // Dark obsidian glass pill background
+      ctx.fillStyle = 'rgba(10, 14, 23, 0.85)';
+      const radius = 18;
       const x = 16, y = 14, w = canvas.width - 32, h = canvas.height - 28;
       ctx.beginPath();
       ctx.moveTo(x + radius, y);
@@ -364,22 +442,30 @@ def view_standalone_graph():
       ctx.closePath();
       ctx.fill();
 
+      // Subtle colored accent border on the pill
       ctx.strokeStyle = color || 'rgba(255, 255, 255, 0.2)';
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      ctx.font = 'bold 22px Inter, system-ui, sans-serif';
+      // Glowing color-coded status dot
+      ctx.beginPath();
+      ctx.arc(x + 20, y + h / 2, 6, 0, 2 * Math.PI);
+      ctx.fillStyle = color || '#818cf8';
+      ctx.fill();
+
+      // Label text
+      ctx.font = 'bold 20px Inter, system-ui, sans-serif';
       ctx.fillStyle = '#f8fafc';
-      ctx.textAlign = 'center';
+      ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
-      const display = text.length > 24 ? text.substring(0, 22) + '...' : text;
-      ctx.fillText(display, canvas.width / 2, canvas.height / 2);
+      const display = text.length > 20 ? text.substring(0, 18) + '...' : text;
+      ctx.fillText(display, x + 36, y + h / 2);
 
       const texture = new THREE.CanvasTexture(canvas);
       texture.minFilter = THREE.LinearFilter;
       const spriteMaterial = new THREE.SpriteMaterial({ map: texture, depthWrite: false, transparent: true });
       const sprite = new THREE.Sprite(spriteMaterial);
-      sprite.scale.set(38, 8, 1);
+      sprite.scale.set(38, 8.5, 1);
       return sprite;
     }
 
@@ -391,33 +477,65 @@ def view_standalone_graph():
       .nodeLabel(n => `${n.label} [${(n.status || 'unevaluated').toUpperCase()}]`)
       .nodeThreeObject(node => {
         const group = new THREE.Group();
-        const radius = Math.min(14, Math.max(4.5, (node.degree || 1) * 2));
-        const sphereGeo = new THREE.SphereGeometry(radius, 24, 24);
+        const baseRadius = Math.min(13, Math.max(4.5, (node.degree || 1) * 2));
+
+        // 1. Core Sphere with emissive glow
+        const sphereGeo = new THREE.SphereGeometry(baseRadius, 32, 32);
         const sphereMat = new THREE.MeshPhongMaterial({
           color: node.color,
           emissive: node.color,
-          emissiveIntensity: 0.35,
+          emissiveIntensity: 0.45,
           shininess: 90,
           transparent: true,
-          opacity: 0.92
+          opacity: 0.95
         });
         group.add(new THREE.Mesh(sphereGeo, sphereMat));
 
+        // 2. Glowing Halo / Atmosphere (translucent aura sphere)
+        const auraGeo = new THREE.SphereGeometry(baseRadius * 1.35, 24, 24);
+        const auraMat = new THREE.MeshBasicMaterial({
+          color: node.color,
+          transparent: true,
+          opacity: 0.22,
+          side: THREE.BackSide,
+          blending: THREE.AdditiveBlending
+        });
+        group.add(new THREE.Mesh(auraGeo, auraMat));
+
+        // 3. Artistic Celestial Orbit Ring for connected / verified / problem notes
+        if ((node.degree && node.degree > 1) || node.status === 'verified' || node.status === 'suspected_problem' || node.status === 'updated_after_feedback') {
+          const ringGeo = new THREE.RingGeometry(baseRadius * 1.45, baseRadius * 1.68, 32);
+          const ringMat = new THREE.MeshBasicMaterial({
+            color: node.color,
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: 0.45,
+            blending: THREE.AdditiveBlending
+          });
+          const ring = new THREE.Mesh(ringGeo, ringMat);
+          ring.rotation.x = Math.PI / 3;
+          ring.rotation.y = Math.PI / 6;
+          group.add(ring);
+        }
+
+        // 4. Floating Obsidian 3D Pill Sprite
         const labelSprite = createTextSprite(node.label, node.color);
-        labelSprite.position.set(0, radius + 8, 0);
+        labelSprite.position.set(0, baseRadius + 7.5, 0);
         group.add(labelSprite);
+
         return group;
       })
       .linkSource('source')
       .linkTarget('target')
       .linkLabel(l => l.relation || '')
       .linkColor(l => l.color)
-      .linkWidth(1.4)
+      .linkWidth(1.6)
       .linkDirectionalParticles(2)
-      .linkDirectionalParticleWidth(1.8)
-      .linkDirectionalParticleSpeed(0.005)
+      .linkDirectionalParticleWidth(2.2)
+      .linkDirectionalParticleSpeed(0.006)
+      .linkDirectionalParticleColor(l => l.color)
       .linkDirectionalArrowLength(4)
-      .linkDirectionalArrowRelPos(1)
+      .linkDirectionalArrowRelPos(0.98)
       .onNodeClick(node => {
         const distance = 85;
         const distRatio = 1 + distance / Math.hypot(node.x || 1, node.y || 1, node.z || 1);
@@ -435,57 +553,112 @@ def view_standalone_graph():
         document.getElementById('inspector').style.display = 'none';
       });
 
-    // Ambient and directional light
+    // Ambient and directional lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
     Graph.scene().add(ambientLight);
     const dirLight = new THREE.DirectionalLight(0xffffff, 0.65);
     dirLight.position.set(100, 200, 150);
     Graph.scene().add(dirLight);
 
+    async function fetchCandidate(url) {
+      const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.json();
+    }
+
     async function fetchAndRenderGraph() {
-      try {
-        const res = await fetch('/graph');
-        const data = await res.json();
-        
-        const degrees = {};
-        data.edges.forEach(e => {
-          degrees[e.source] = (degrees[e.source] || 0) + 1;
-          degrees[e.target] = (degrees[e.target] || 0) + 1;
-        });
+      const statusEl = document.getElementById('loader-status');
+      const errorEl = document.getElementById('loader-error');
+      const errorMsg = document.getElementById('loader-error-msg');
+      const spinner = document.getElementById('loader-spinner');
+      const overlay = document.getElementById('loading-overlay');
 
-        const nodes = data.nodes.map(n => ({
-          id: n.id,
-          label: n.label,
-          type: n.type,
-          status: n.status || 'unevaluated',
-          color: STATUS_COLORS[n.status] || '#94a3b8',
-          description: n.description,
-          degree: degrees[n.id] || 1
-        }));
+      errorEl.style.display = 'none';
+      spinner.style.display = 'block';
+      statusEl.style.display = 'block';
+      overlay.style.display = 'flex';
+      overlay.style.opacity = '1';
 
-        const links = data.edges.map(e => ({
-          id: e.id,
-          source: e.source,
-          target: e.target,
-          relation: e.relation,
-          status: e.status || 'unevaluated',
-          color: STATUS_COLORS[e.status] ? `${STATUS_COLORS[e.status]}88` : 'rgba(148, 163, 184, 0.35)'
-        }));
+      const candidateEndpoints = [
+        window.location.pathname.startsWith('/api') ? '/api/graph' : '/graph',
+        '/api/graph',
+        '/graph',
+        'http://127.0.0.1:8000/graph',
+        'http://localhost:8000/graph'
+      ];
+      const uniqueEndpoints = [...new Set(candidateEndpoints)];
 
-        Graph.graphData({ nodes, links });
-      } catch (err) {
-        console.error('Error fetching graph via REST API:', err);
+      let data = null;
+      let lastErr = null;
+
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        for (const ep of uniqueEndpoints) {
+          try {
+            statusEl.innerText = `Connecting to Graph API (${ep})...`;
+            data = await fetchCandidate(ep);
+            if (data && Array.isArray(data.nodes)) {
+              break;
+            }
+          } catch (err) {
+            lastErr = err;
+          }
+        }
+        if (data && Array.isArray(data.nodes)) break;
+
+        statusEl.innerText = `Waiting for server response (attempt ${attempt}/3)...`;
+        await new Promise(r => setTimeout(r, 1200));
       }
+
+      if (!data || !Array.isArray(data.nodes)) {
+        spinner.style.display = 'none';
+        statusEl.style.display = 'none';
+        errorEl.style.display = 'block';
+        errorMsg.innerText = `Graph view unavailable: ${lastErr ? lastErr.message : 'Unable to connect to FastAPI backend'}. Ensure the backend server is running on port 8000.`;
+        return;
+      }
+
+      // Hide loading overlay
+      overlay.style.opacity = '0';
+      setTimeout(() => { overlay.style.display = 'none'; }, 400);
+
+      const degrees = {};
+      (data.edges || []).forEach(e => {
+        degrees[e.source] = (degrees[e.source] || 0) + 1;
+        degrees[e.target] = (degrees[e.target] || 0) + 1;
+      });
+
+      const nodes = (data.nodes || []).map(n => ({
+        id: n.id,
+        label: n.label,
+        type: n.type,
+        status: n.status || 'unevaluated',
+        color: STATUS_COLORS[n.status] || '#818cf8',
+        description: n.description,
+        degree: degrees[n.id] || 1
+      }));
+
+      const links = (data.edges || []).map(e => ({
+        id: e.id,
+        source: e.source,
+        target: e.target,
+        relation: e.relation,
+        status: e.status || 'unevaluated',
+        color: (STATUS_COLORS[e.status] || '#818cf8') + '88'
+      }));
+
+      Graph.graphData({ nodes, links });
+      Graph.d3Force('link').distance(115);
+      Graph.d3Force('charge').strength(-180);
     }
 
     function showInspector(type, data) {
       const inspector = document.getElementById('inspector');
       inspector.style.display = 'flex';
       const badge = document.getElementById('inspector-badge');
-      const stColor = STATUS_COLORS[data.status] || '#94a3b8';
-      badge.style.background = stColor + '25';
-      badge.style.color = stColor;
-      badge.style.border = `1px solid ${stColor}`;
+      const stColor = STATUS_COLORS[data.status] || '#818cf8';
+      badge.style.background = 'rgba(255, 255, 255, 0.08)';
+      badge.style.color = '#f8fafc';
+      badge.style.border = `1px solid rgba(255, 255, 255, 0.2)`;
       badge.innerText = data.status || 'unevaluated';
 
       if (type === 'node') {
@@ -537,6 +710,18 @@ def view_standalone_graph():
 
     window.addEventListener('resize', () => {
       Graph.width(window.innerWidth).height(window.innerHeight);
+    });
+
+    // Keyboard navigation
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        btnOrbit.click();
+      } else if (e.code === 'KeyR') {
+        document.getElementById('btn-recenter').click();
+      } else if (e.code === 'Escape') {
+        document.getElementById('inspector').style.display = 'none';
+      }
     });
 
     fetchAndRenderGraph();

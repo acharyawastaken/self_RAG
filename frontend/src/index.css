@@ -40,16 +40,16 @@ html.dark,
   --icon-stroke: #f8fafc;
   --icon-trail: rgba(148, 163, 184, 0.55);
 
-  /* Marker Highlight tokens */
-  --marker-color: #facc15;
-  --marker-text-color: #171717;
+  /* Marker Highlight tokens (Monochrome light-beam effect) */
+  --marker-color: rgba(255, 255, 255, 0.92);
+  --marker-text-color: #000000;
 
-  /* Verification & State Machine statuses */
-  --status-unevaluated: #94a3b8;
-  --status-suspected: #f87171;
-  --status-pending: #fbbf24;
-  --status-verified: #34d399;
-  --status-updated: #60a5fa;
+  /* Verification & State Machine statuses (Sleek Monochrome Scales) */
+  --status-unevaluated: #71717a;
+  --status-suspected: #e4e4e7;
+  --status-pending: #d4d4d8;
+  --status-verified: #fafafa;
+  --status-updated: #a1a1aa;
 
   /* Radii */
   --radius-xs: 4px;
@@ -63,41 +63,45 @@ html.dark,
 html.light,
 [data-theme="light"] {
   /* Surfaces */
-  --bg-main: #f8fafc;
-  --bg-surface: rgba(255, 255, 255, 0.9);
+  --bg-main: #f4f4f5;
+  --bg-surface: rgba(255, 255, 255, 0.95);
   --bg-surface-elevated: #ffffff;
-  --bg-card: rgba(255, 255, 255, 0.85);
+  --bg-card: rgba(255, 255, 255, 0.9);
   --bg-card-hover: #ffffff;
-  --bg-capsule: rgba(15, 23, 42, 0.05);
+  --bg-capsule: rgba(0, 0, 0, 0.05);
 
   /* Borders & Grid */
-  --border-color: rgba(15, 23, 42, 0.12);
-  --border-subtle: rgba(15, 23, 42, 0.06);
-  --border-focus: rgba(15, 23, 42, 0.45);
-  --grid-color: rgba(17, 17, 17, 0.08);
-  --focus-glow: rgba(15, 23, 42, 0.12);
+  --border-color: rgba(0, 0, 0, 0.12);
+  --border-subtle: rgba(0, 0, 0, 0.06);
+  --border-focus: rgba(0, 0, 0, 0.45);
+  --grid-color: rgba(0, 0, 0, 0.07);
+  --focus-glow: rgba(0, 0, 0, 0.1);
 
   /* Typography */
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
-  --text-inverted: #f8fafc;
+  --text-primary: #09090b;
+  --text-secondary: #52525b;
+  --text-muted: #71717a;
+  --text-inverted: #fafafa;
 
   /* Overlays & Shadows */
-  --overlay-bg: linear-gradient(180deg, rgba(248, 250, 252, 0.96) 0%, rgba(241, 245, 249, 0.68) 45%, rgba(248, 250, 252, 0.96) 100%);
-  --shadow-bento: 0 10px 30px -10px rgba(15, 23, 42, 0.08);
-  --shadow-glow: 0 0 25px rgba(15, 23, 42, 0.04);
+  --overlay-bg: linear-gradient(180deg, rgba(244, 244, 245, 0.96) 0%, rgba(244, 244, 245, 0.7) 45%, rgba(244, 244, 245, 0.96) 100%);
+  --shadow-bento: 0 10px 30px -10px rgba(0, 0, 0, 0.08);
+  --shadow-glow: 0 0 25px rgba(0, 0, 0, 0.04);
 
   /* Icon tokens */
-  --icon-stroke: #111827;
-  --icon-trail: rgba(30, 41, 59, 0.42);
+  --icon-stroke: #09090b;
+  --icon-trail: rgba(0, 0, 0, 0.35);
+
+  /* Marker Highlight tokens */
+  --marker-color: #18181b;
+  --marker-text-color: #fafafa;
 
   /* Verification & State Machine statuses */
-  --status-unevaluated: #64748b;
-  --status-suspected: #dc2626;
-  --status-pending: #d97706;
-  --status-verified: #059669;
-  --status-updated: #2563eb;
+  --status-unevaluated: #71717a;
+  --status-suspected: #27272a;
+  --status-pending: #3f3f46;
+  --status-verified: #09090b;
+  --status-updated: #52525b;
 }
 
 /* ==========================================================================
@@ -381,14 +385,14 @@ code, pre, .font-mono {
 }
 
 .btn-danger {
-  background: rgba(239, 68, 68, 0.12);
-  color: #f87171;
-  border-color: rgba(239, 68, 68, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .btn-danger:hover {
-  background: rgba(239, 68, 68, 0.22);
-  border-color: rgba(239, 68, 68, 0.45);
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 /* Bento Theme Toggle */
@@ -464,7 +468,7 @@ select:focus {
 }
 
 /* ==========================================================================
-   STATUS BADGES (5-STATE SPEC)
+   STATUS BADGES (5-STATE SPEC - MONOCHROME EDITION)
    ========================================================================== */
 
 .badge {
@@ -477,37 +481,39 @@ select:focus {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  border: 1px solid transparent;
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface-elevated);
+  color: var(--text-primary);
 }
 
 .badge-unevaluated {
-  background: rgba(148, 163, 184, 0.12);
-  color: var(--status-unevaluated);
-  border-color: rgba(148, 163, 184, 0.25);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-muted);
+  border-color: var(--border-subtle);
 }
 
 .badge-suspected {
-  background: rgba(239, 68, 68, 0.12);
-  color: var(--status-suspected);
-  border-color: rgba(239, 68, 68, 0.28);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .badge-pending {
-  background: rgba(245, 158, 11, 0.12);
-  color: var(--status-pending);
-  border-color: rgba(245, 158, 11, 0.28);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  border-color: var(--border-color);
 }
 
 .badge-verified {
-  background: rgba(16, 185, 129, 0.12);
-  color: var(--status-verified);
-  border-color: rgba(16, 185, 129, 0.28);
+  background: var(--text-primary);
+  color: var(--text-inverted);
+  border-color: var(--text-primary);
 }
 
 .badge-updated {
-  background: rgba(59, 130, 246, 0.12);
-  color: var(--status-updated);
-  border-color: rgba(59, 130, 246, 0.28);
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-primary);
+  border-color: var(--border-focus);
 }
 
 /* ==========================================================================
@@ -845,7 +851,7 @@ select:focus {
   content: "";
   position: absolute;
   inset: 0.08em -0.08em;
-  background: var(--marker-color, #facc15);
+  background: var(--marker-color, rgba(255, 255, 255, 0.95));
   transform-origin: left center;
   transform: scaleX(0);
   transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
@@ -859,14 +865,14 @@ select:focus {
 .marker-on-hover:hover::before,
 .cursor-marker-highlight.active::before {
   transform: scaleX(1);
-  box-shadow: 0 1px 8px rgba(250, 204, 21, 0.45);
+  box-shadow: 0 1px 12px rgba(255, 255, 255, 0.3);
 }
 
 .cursor-marker-highlight:hover,
 .marker-highlight:hover,
 .marker-on-hover:hover,
 .cursor-marker-highlight.active {
-  color: var(--marker-text-color, #171717) !important;
+  color: var(--marker-text-color, #000000) !important;
 }
 
 .cursor-marker-highlight > *,
@@ -876,25 +882,17 @@ select:focus {
   z-index: 1;
 }
 
-/* Cyan / Blue Marker Variant */
-.marker-cyan::before {
-  background: #38bdf8 !important;
-}
-.marker-cyan:hover::before {
-  box-shadow: 0 1px 8px rgba(56, 189, 248, 0.45) !important;
-}
-.marker-cyan:hover {
-  color: #0f172a !important;
-}
-
-/* Green / Emerald Marker Variant */
+/* Monochrome Marker Variant - Subtle highlight */
+.marker-cyan::before,
 .marker-green::before {
-  background: #4ade80 !important;
+  background: var(--marker-color, rgba(255, 255, 255, 0.95)) !important;
 }
+.marker-cyan:hover::before,
 .marker-green:hover::before {
-  box-shadow: 0 1px 8px rgba(74, 222, 128, 0.45) !important;
+  box-shadow: 0 1px 12px rgba(255, 255, 255, 0.3) !important;
 }
+.marker-cyan:hover,
 .marker-green:hover {
-  color: #052e16 !important;
+  color: var(--marker-text-color, #000000) !important;
 }
 

@@ -23,25 +23,25 @@ import { apiClient } from '../api/client';
 import StatusBadge from '../components/StatusBadge';
 
 const STATUS_COLORS = {
-  unevaluated: '#94a3b8',
-  suspected_problem: '#ef4444',
-  pending_correction: '#f59e0b',
-  verified: '#10b981',
-  updated_after_feedback: '#3b82f6',
+  verified: '#10b981',             // Luminous Emerald Green
+  updated_after_feedback: '#06b6d4', // Luminous Electric Cyan
+  pending_correction: '#f59e0b',     // Radiant Amber
+  suspected_problem: '#ef4444',      // Radiant Crimson Red
+  unevaluated: '#818cf8',            // Luminous Iris Violet (Nebula glow)
 };
 
 // Canvas text sprite generator for Obsidian-style floating 3D labels
 function createTextSprite(text, color) {
   const canvas = document.createElement('canvas');
-  canvas.width = 384;
-  canvas.height = 80;
+  canvas.width = 400;
+  canvas.height = 90;
   const ctx = canvas.getContext('2d');
   ctx.fillStyle = 'rgba(0, 0, 0, 0)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Background pill for label contrast
-  ctx.fillStyle = 'rgba(11, 15, 23, 0.75)';
-  const radius = 16;
+  // Dark obsidian glass pill background
+  ctx.fillStyle = 'rgba(10, 14, 23, 0.85)';
+  const radius = 18;
   const x = 16, y = 14, w = canvas.width - 32, h = canvas.height - 28;
   ctx.beginPath();
   ctx.moveTo(x + radius, y);
@@ -56,17 +56,25 @@ function createTextSprite(text, color) {
   ctx.closePath();
   ctx.fill();
 
+  // Subtle colored accent border on the pill
   ctx.strokeStyle = color || 'rgba(255, 255, 255, 0.2)';
   ctx.lineWidth = 2;
   ctx.stroke();
 
-  ctx.font = 'bold 22px Inter, system-ui, sans-serif';
+  // Glowing color-coded status dot
+  ctx.beginPath();
+  ctx.arc(x + 20, y + h / 2, 6, 0, 2 * Math.PI);
+  ctx.fillStyle = color || '#818cf8';
+  ctx.fill();
+
+  // Label text
+  ctx.font = 'bold 20px Inter, system-ui, sans-serif';
   ctx.fillStyle = '#f8fafc';
-  ctx.textAlign = 'center';
+  ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
   
-  const display = text.length > 24 ? text.substring(0, 22) + '...' : text;
-  ctx.fillText(display, canvas.width / 2, canvas.height / 2);
+  const display = text.length > 20 ? text.substring(0, 18) + '...' : text;
+  ctx.fillText(display, x + 36, y + h / 2);
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.minFilter = THREE.LinearFilter;
@@ -76,7 +84,7 @@ function createTextSprite(text, color) {
     transparent: true,
   });
   const sprite = new THREE.Sprite(spriteMaterial);
-  sprite.scale.set(38, 8, 1);
+  sprite.scale.set(38, 8.5, 1);
   return sprite;
 }
 
@@ -148,7 +156,7 @@ export default function GraphPage() {
       label: n.label,
       type: n.type,
       status: n.status || 'unevaluated',
-      color: STATUS_COLORS[n.status] || '#94a3b8',
+      color: STATUS_COLORS[n.status] || '#818cf8',
       document_id: n.document_id,
       chunk_id: n.chunk_id,
       description: n.description,
@@ -162,7 +170,7 @@ export default function GraphPage() {
       relation: e.relation,
       status: e.status || 'unevaluated',
       origin_type: e.origin_type,
-      color: STATUS_COLORS[e.status] ? `${STATUS_COLORS[e.status]}88` : 'rgba(148, 163, 184, 0.35)',
+      color: (STATUS_COLORS[e.status] || '#818cf8') + '88',
     }));
 
     return { nodes, links };
@@ -177,28 +185,55 @@ export default function GraphPage() {
         .backgroundColor('#080c14')
         .showNavInfo(false)
         .nodeId('id')
-        .nodeLabel((n) => `${n.label} [${n.status.toUpperCase()}]`)
+        .nodeLabel((n) => `${n.label} [${(n.status || 'unevaluated').toUpperCase()}]`)
         .nodeThreeObject((node) => {
           const group = new THREE.Group();
+          const baseRadius = Math.min(13, Math.max(4.5, (node.degree || 1) * 2));
           
-          // Dynamic radius: degree scales from 4 to 12
-          const radius = Math.min(14, Math.max(4.5, (node.degree || 1) * 2));
-          const sphereGeo = new THREE.SphereGeometry(radius, 24, 24);
-          
+          // 1. Core Sphere with emissive glow and phong shading
+          const sphereGeo = new THREE.SphereGeometry(baseRadius, 32, 32);
           const sphereMat = new THREE.MeshPhongMaterial({
             color: node.color,
             emissive: node.color,
-            emissiveIntensity: 0.35,
+            emissiveIntensity: 0.45,
             shininess: 90,
             transparent: true,
-            opacity: 0.92,
+            opacity: 0.95,
           });
           const sphere = new THREE.Mesh(sphereGeo, sphereMat);
           group.add(sphere);
 
-          // Obsidian 3D floating text label
+          // 2. Glowing Halo / Atmosphere (translucent aura sphere)
+          const auraGeo = new THREE.SphereGeometry(baseRadius * 1.35, 24, 24);
+          const auraMat = new THREE.MeshBasicMaterial({
+            color: node.color,
+            transparent: true,
+            opacity: 0.22,
+            side: THREE.BackSide,
+            blending: THREE.AdditiveBlending,
+          });
+          const aura = new THREE.Mesh(auraGeo, auraMat);
+          group.add(aura);
+
+          // 3. Artistic Celestial Orbit Ring for connected / verified / problem notes
+          if ((node.degree && node.degree > 1) || node.status === 'verified' || node.status === 'suspected_problem' || node.status === 'updated_after_feedback') {
+            const ringGeo = new THREE.RingGeometry(baseRadius * 1.45, baseRadius * 1.68, 32);
+            const ringMat = new THREE.MeshBasicMaterial({
+              color: node.color,
+              side: THREE.DoubleSide,
+              transparent: true,
+              opacity: 0.45,
+              blending: THREE.AdditiveBlending,
+            });
+            const ring = new THREE.Mesh(ringGeo, ringMat);
+            ring.rotation.x = Math.PI / 3;
+            ring.rotation.y = Math.PI / 6;
+            group.add(ring);
+          }
+
+          // 4. Floating Obsidian 3D Pill Sprite
           const labelSprite = createTextSprite(node.label, node.color);
-          labelSprite.position.set(0, radius + 8, 0);
+          labelSprite.position.set(0, baseRadius + 7.5, 0);
           group.add(labelSprite);
 
           return group;
@@ -207,12 +242,13 @@ export default function GraphPage() {
         .linkTarget('target')
         .linkLabel((l) => (l.relation ? l.relation.replace('_', ' ') : ''))
         .linkColor((l) => l.color)
-        .linkWidth(1.4)
+        .linkWidth(1.6)
         .linkDirectionalParticles(2)
-        .linkDirectionalParticleWidth(1.8)
-        .linkDirectionalParticleSpeed(0.005)
+        .linkDirectionalParticleWidth(2.2)
+        .linkDirectionalParticleSpeed(0.006)
+        .linkDirectionalParticleColor((l) => l.color)
         .linkDirectionalArrowLength(4)
-        .linkDirectionalArrowRelPos(1)
+        .linkDirectionalArrowRelPos(0.98)
         .onNodeClick((node) => {
           // Smoothly fly camera to node in 3D space
           const distance = 85;
@@ -331,7 +367,7 @@ export default function GraphPage() {
           )}
 
           <a
-            href="http://localhost:8000/graph/view"
+            href="/api/graph/view"
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-primary"
@@ -415,19 +451,19 @@ export default function GraphPage() {
           </select>
         </div>
 
-        {/* Status Filter Badges */}
+        {/* Status Filter Badges (Bento Monochrome with Subtle Dot Key) */}
         <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
           <button
             onClick={() => setStatusFilter('')}
             style={{
-              padding: '4px 10px',
+              padding: '5px 12px',
               borderRadius: 'var(--radius-sm)',
               fontSize: '0.75rem',
               fontWeight: 600,
               cursor: 'pointer',
               background: statusFilter === '' ? 'var(--text-primary)' : 'rgba(255, 255, 255, 0.05)',
               color: statusFilter === '' ? 'var(--bg-main)' : 'var(--text-muted)',
-              border: 'none',
+              border: statusFilter === '' ? '1px solid var(--text-primary)' : '1px solid var(--border-subtle)',
               transition: 'all 0.15s ease',
             }}
           >
@@ -440,19 +476,26 @@ export default function GraphPage() {
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '6px',
-                padding: '4px 10px',
+                gap: '8px',
+                padding: '5px 12px',
                 borderRadius: 'var(--radius-sm)',
                 fontSize: '0.75rem',
                 fontWeight: 600,
                 cursor: 'pointer',
-                background: statusFilter === st ? `${color}25` : 'rgba(255, 255, 255, 0.05)',
-                color: statusFilter === st ? color : 'var(--text-muted)',
-                border: statusFilter === st ? `1px solid ${color}` : '1px solid transparent',
+                background: statusFilter === st ? 'var(--text-primary)' : 'rgba(255, 255, 255, 0.05)',
+                color: statusFilter === st ? 'var(--bg-main)' : 'var(--text-secondary)',
+                border: statusFilter === st ? '1px solid var(--text-primary)' : '1px solid var(--border-subtle)',
                 transition: 'all 0.15s ease',
               }}
             >
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: color }} />
+              <span style={{ 
+                width: '8px', 
+                height: '8px', 
+                borderRadius: '50%', 
+                background: color, 
+                boxShadow: `0 0 6px ${color}`,
+                flexShrink: 0
+              }} />
               {st.replace(/_/g, ' ')}
             </button>
           ))}
@@ -495,8 +538,8 @@ export default function GraphPage() {
             left: 0,
             right: 0,
             bottom: 0,
-            background: 'rgba(8, 12, 20, 0.8)',
-            backdropFilter: 'blur(4px)',
+            background: 'rgba(8, 12, 20, 0.85)',
+            backdropFilter: 'blur(6px)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -511,31 +554,56 @@ export default function GraphPage() {
           </div>
         )}
 
-        {/* Controls Overlay Legend & Instructions */}
+        {/* Controls Overlay Legend & Instructions (Monochrome Bento Capsule with Color-Coded Art Key) */}
         <div style={{
           position: 'absolute',
           bottom: '20px',
           left: '20px',
-          background: 'rgba(11, 15, 23, 0.85)',
-          backdropFilter: 'blur(10px)',
+          background: 'rgba(11, 15, 23, 0.88)',
+          backdropFilter: 'blur(12px)',
           border: '1px solid var(--border-color)',
           borderRadius: 'var(--radius-md)',
-          padding: '12px 16px',
+          padding: '14px 18px',
           fontSize: '0.75rem',
           display: 'flex',
           flexDirection: 'column',
-          gap: '8px',
-          pointerEvents: 'none',
+          gap: '10px',
           boxShadow: 'var(--shadow-glass)',
+          maxWidth: '300px',
         }}>
-          <div style={{ fontWeight: 600, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Sparkles size={14} style={{ color: 'var(--text-primary)' }} />
-            3D Navigation
+          <div>
+            <div style={{ fontWeight: 600, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px', fontSize: '0.78rem' }}>
+              <Sparkles size={14} style={{ color: 'var(--text-primary)' }} />
+              3D Graph Art Color Coding
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)' }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 6px #10b981' }} />
+                <span>Verified Note</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)' }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#06b6d4', boxShadow: '0 0 6px #06b6d4' }} />
+                <span>Updated After Feedback</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)' }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f59e0b', boxShadow: '0 0 6px #f59e0b' }} />
+                <span>Pending Review</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)' }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ef4444', boxShadow: '0 0 6px #ef4444' }} />
+                <span>Suspected Problem</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)' }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#818cf8', boxShadow: '0 0 6px #818cf8' }} />
+                <span>Unevaluated Note</span>
+              </div>
+            </div>
           </div>
-          <div style={{ color: 'var(--text-muted)' }}>• <strong>Left Click + Drag:</strong> Rotate 3D Orbit</div>
-          <div style={{ color: 'var(--text-muted)' }}>• <strong>Right Click + Drag:</strong> Pan 3D Camera</div>
-          <div style={{ color: 'var(--text-muted)' }}>• <strong>Scroll Wheel:</strong> Zoom In / Out</div>
-          <div style={{ color: 'var(--text-muted)' }}>• <strong>Click Node:</strong> Focus & Inspect Note</div>
+          <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '8px', display: 'flex', flexDirection: 'column', gap: '3px', color: 'var(--text-muted)' }}>
+            <div>• <strong>Left Click + Drag:</strong> Rotate Orbit</div>
+            <div>• <strong>Right Click + Drag:</strong> Pan Camera</div>
+            <div>• <strong>Scroll:</strong> Zoom • <strong>Click Node:</strong> Inspect Note</div>
+          </div>
         </div>
 
         {/* Floating Physics Controls Panel */}

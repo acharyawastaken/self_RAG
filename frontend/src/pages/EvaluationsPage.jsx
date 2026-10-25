@@ -125,7 +125,7 @@ export default function EvaluationsPage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '28px' }}>
           <div className="glass-panel" style={{ padding: '20px' }}>
             <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', textTransform: 'uppercase', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-              <Target size={15} color="#34d399" /> Mean Accuracy
+              <Target size={15} /> Mean Accuracy
             </div>
             <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
               {((latestRun.metrics?.mean_accuracy || 0) * 100).toFixed(1)}%
@@ -137,7 +137,7 @@ export default function EvaluationsPage() {
 
           <div className="glass-panel" style={{ padding: '20px' }}>
             <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', textTransform: 'uppercase', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-              <CheckCircle size={15} color="#60a5fa" /> Retrieval Recall@k
+              <CheckCircle size={15} /> Retrieval Recall@k
             </div>
             <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
               {((latestRun.metrics?.retrieval_recall_at_k || 0) * 100).toFixed(1)}%
@@ -149,7 +149,7 @@ export default function EvaluationsPage() {
 
           <div className="glass-panel" style={{ padding: '20px' }}>
             <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', textTransform: 'uppercase', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-              <BookOpen size={15} color="#a78bfa" /> Source Support
+              <BookOpen size={15} /> Source Support
             </div>
             <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
               {((latestRun.metrics?.source_support_rate || 0) * 100).toFixed(1)}%
@@ -161,7 +161,7 @@ export default function EvaluationsPage() {
 
           <div className="glass-panel" style={{ padding: '20px' }}>
             <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', textTransform: 'uppercase', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-              <Clock size={15} color="#fbbf24" /> Median Latency
+              <Clock size={15} /> Median Latency
             </div>
             <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
               {latestRun.metrics?.median_latency_s || 0}s
@@ -177,7 +177,7 @@ export default function EvaluationsPage() {
       {evaluations.length > 1 && (
         <div className="glass-panel" style={{ padding: '24px', marginBottom: '28px' }}>
           <h2 style={{ fontSize: '1.15rem', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <BarChart2 size={18} color="#60a5fa" /> Historical Learning Progression
+            <BarChart2 size={18} /> Historical Learning Progression
           </h2>
           <div style={{ height: '300px', width: '100%' }}>
             <ResponsiveContainer width="100%" height="100%">
@@ -187,16 +187,16 @@ export default function EvaluationsPage() {
                 <YAxis stroke="var(--text-muted)" fontSize={12} unit="%" />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#1e293b',
+                    backgroundColor: 'var(--bg-surface-elevated)',
                     borderColor: 'var(--border-color)',
                     borderRadius: '8px',
-                    color: '#fff',
+                    color: 'var(--text-primary)',
                   }}
                 />
                 <Legend />
-                <Bar dataKey="Accuracy" fill="#34d399" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="Recall" fill="#60a5fa" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="Citations" fill="#a78bfa" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="Accuracy" fill="#ffffff" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="Recall" fill="#a1a1aa" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="Citations" fill="#52525b" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

@@ -48,11 +48,10 @@ export default function Sidebar() {
     { to: '/ask', label: 'Ask & Answers', icon: MessageSquare, tag: '02' },
     { to: '/review', label: 'Critic & Review', icon: CheckSquare, tag: '03' },
     { 
-      to: 'http://localhost:8000/graph/view', 
+      to: '/graph', 
       label: 'Obsidian 3D Graph', 
       icon: Network, 
-      tag: '04', 
-      isExternal: true 
+      tag: '04' 
     },
     { to: '/evaluations', label: 'Evaluations', icon: BarChart2, tag: '05' },
   ];
@@ -93,7 +92,7 @@ export default function Sidebar() {
           </div>
 
           <span className="bento-capsule" style={{ padding: '3px 8px', fontSize: '9px', letterSpacing: '0.25em' }}>
-            <span className="bento-capsule-dot" style={{ background: '#34d399' }} />
+            <span className="bento-capsule-dot" style={{ background: 'var(--text-primary)' }} />
             Live
           </span>
         </div>
@@ -242,8 +241,9 @@ export default function Sidebar() {
               <Activity size={12} /> Backend API
             </span>
             <span style={{
-              color: health?.status === 'ok' ? '#34d399' : '#f87171',
+              color: 'var(--text-primary)',
               fontWeight: 600,
+              opacity: health?.status === 'ok' ? 1 : 0.6,
             }}>
               {health?.status === 'ok' ? 'Online' : 'Offline'}
             </span>
@@ -254,8 +254,9 @@ export default function Sidebar() {
             </span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{
-                color: health?.ollama_connected ? '#34d399' : '#fbbf24',
+                color: 'var(--text-primary)',
                 fontWeight: 600,
+                opacity: health?.ollama_connected ? 1 : 0.6,
               }}>
                 {health?.ollama_connected ? 'Active' : 'Standby'}
               </span>
