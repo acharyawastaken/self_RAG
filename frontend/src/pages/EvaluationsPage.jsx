@@ -127,7 +127,7 @@ export default function EvaluationsPage() {
             <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', textTransform: 'uppercase', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
               <Target size={15} color="#34d399" /> Mean Accuracy
             </div>
-            <div style={{ fontSize: '2rem', fontWeight: 700, color: '#fff' }}>
+            <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
               {((latestRun.metrics?.mean_accuracy || 0) * 100).toFixed(1)}%
             </div>
             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
@@ -139,7 +139,7 @@ export default function EvaluationsPage() {
             <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', textTransform: 'uppercase', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
               <CheckCircle size={15} color="#60a5fa" /> Retrieval Recall@k
             </div>
-            <div style={{ fontSize: '2rem', fontWeight: 700, color: '#fff' }}>
+            <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
               {((latestRun.metrics?.retrieval_recall_at_k || 0) * 100).toFixed(1)}%
             </div>
             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
@@ -151,7 +151,7 @@ export default function EvaluationsPage() {
             <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', textTransform: 'uppercase', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
               <BookOpen size={15} color="#a78bfa" /> Source Support
             </div>
-            <div style={{ fontSize: '2rem', fontWeight: 700, color: '#fff' }}>
+            <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
               {((latestRun.metrics?.source_support_rate || 0) * 100).toFixed(1)}%
             </div>
             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
@@ -163,7 +163,7 @@ export default function EvaluationsPage() {
             <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', textTransform: 'uppercase', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
               <Clock size={15} color="#fbbf24" /> Median Latency
             </div>
-            <div style={{ fontSize: '2rem', fontWeight: 700, color: '#fff' }}>
+            <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
               {latestRun.metrics?.median_latency_s || 0}s
             </div>
             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
@@ -237,7 +237,7 @@ export default function EvaluationsPage() {
               <tbody>
                 {evaluations.map((run) => (
                   <tr key={run.evaluation_id} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                    <td style={{ padding: '14px 20px', color: '#fff', fontWeight: 500 }}>
+                    <td style={{ padding: '14px 20px', color: 'var(--text-primary)', fontWeight: 500 }}>
                       {new Date(run.started_at).toLocaleString()}
                     </td>
                     <td style={{ padding: '14px 20px', color: 'var(--text-secondary)' }}>

@@ -81,7 +81,7 @@ export default function ReviewPage() {
           className="btn"
           style={{
             background: activeTab === 'proposals' ? 'var(--bg-surface-elevated)' : 'transparent',
-            color: activeTab === 'proposals' ? '#fff' : 'var(--text-secondary)',
+            color: activeTab === 'proposals' ? 'var(--text-primary)' : 'var(--text-secondary)',
             border: activeTab === 'proposals' ? '1px solid var(--border-color)' : '1px solid transparent',
           }}
         >
@@ -93,7 +93,7 @@ export default function ReviewPage() {
           className="btn"
           style={{
             background: activeTab === 'lessons' ? 'var(--bg-surface-elevated)' : 'transparent',
-            color: activeTab === 'lessons' ? '#fff' : 'var(--text-secondary)',
+            color: activeTab === 'lessons' ? 'var(--text-primary)' : 'var(--text-secondary)',
             border: activeTab === 'lessons' ? '1px solid var(--border-color)' : '1px solid transparent',
           }}
         >
@@ -124,7 +124,7 @@ export default function ReviewPage() {
           ) : pendingProposals.length === 0 ? (
             <div className="glass-panel" style={{ padding: '48px 24px', textAlign: 'center', color: 'var(--text-muted)' }}>
               <CheckCircle2 size={40} style={{ margin: '0 auto 12px auto', color: '#10b981', opacity: 0.8 }} />
-              <div style={{ fontWeight: 600, color: '#fff', marginBottom: '4px' }}>Review Queue Clear</div>
+              <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px' }}>Review Queue Clear</div>
               <p style={{ fontSize: '0.85rem' }}>No correction proposals currently awaiting verification. Negative student ratings will automatically populate proposals here.</p>
             </div>
           ) : (
@@ -208,7 +208,7 @@ export default function ReviewPage() {
                           style={{ width: '100%', marginBottom: '10px' }}
                         />
                       ) : (
-                        <div style={{ color: '#fff', fontSize: '0.95rem', fontWeight: 500 }}>
+                        <div style={{ color: 'var(--text-primary)', fontSize: '0.95rem', fontWeight: 500 }}>
                           {c.proposed_correction || 'No specific text correction supplied.'}
                         </div>
                       )}

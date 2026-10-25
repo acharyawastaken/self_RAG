@@ -12,6 +12,7 @@ import {
   FileCheck
 } from 'lucide-react';
 import { apiClient } from '../api/client';
+import { CursorMarkerHighlight } from '@/components/ui/marker-highlight';
 
 export default function DocumentsPage() {
   const [documents, setDocuments] = useState([]);
@@ -88,7 +89,10 @@ export default function DocumentsPage() {
       {/* Header */}
       <div style={{ marginBottom: '28px' }}>
         <h1>Document Library</h1>
-        <p>Upload lecture notes, textbooks, and course guides. Text is automatically chunked, embedded, and mapped into the knowledge graph.</p>
+        <p>
+          Upload lecture notes, textbooks, and course guides. Text is automatically chunked, embedded, and mapped into the{' '}
+          <CursorMarkerHighlight highlight="knowledge graph" markerColor="#facc15" />.
+        </p>
       </div>
 
       {error && (
@@ -145,7 +149,7 @@ export default function DocumentsPage() {
         }}>
           {uploading ? <Loader2 size={28} className="animate-spin" /> : <UploadCloud size={28} />}
         </div>
-        <div style={{ fontWeight: 600, fontSize: '1.05rem', color: '#fff', marginBottom: '6px' }}>
+        <div style={{ fontWeight: 600, fontSize: '1.05rem', color: 'var(--text-primary)', marginBottom: '6px' }}>
           {uploading ? 'Parsing and Indexing Document...' : 'Click or Drag & Drop Document Here'}
         </div>
         <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
@@ -189,7 +193,7 @@ export default function DocumentsPage() {
               <tbody>
                 {documents.map((doc) => (
                   <tr key={doc.document_id} style={{ borderBottom: '1px solid var(--border-color)', transition: 'background 0.15s' }}>
-                    <td style={{ padding: '16px 24px', fontWeight: 600, color: '#fff', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <td style={{ padding: '16px 24px', fontWeight: 600, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <FileCheck size={18} color="#60a5fa" />
                       {doc.filename}
                     </td>

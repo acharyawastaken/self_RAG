@@ -10,6 +10,7 @@ const api = axios.create({
 export const apiClient = {
   // Health
   getHealth: () => api.get('/health').then(res => res.data),
+  wakeOllama: () => api.post('/health/ollama/wake').then(res => res.data),
 
   // Documents
   getDocuments: () => api.get('/documents').then(res => res.data),

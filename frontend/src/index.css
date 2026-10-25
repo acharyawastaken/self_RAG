@@ -1,39 +1,108 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
-:root {
+/* ==========================================================================
+   BENTO MONOCHROME DESIGN SYSTEM - THEME TOKENS
+   ========================================================================== */
+
+:root,
+html.dark,
+[data-theme="dark"] {
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  
-  /* Color Palette - Premium Dark Theme */
-  --bg-main: #0b0f17;
-  --bg-surface: #111827;
-  --bg-surface-elevated: #1e293b;
-  --bg-surface-glass: rgba(17, 24, 39, 0.75);
-  --border-color: rgba(255, 255, 255, 0.08);
-  --border-focus: #3b82f6;
+  --font-mono: 'JetBrains Mono', monospace;
 
+  /* Surfaces */
+  --bg-main: #0a0a0c;
+  --bg-surface: rgba(18, 18, 22, 0.75);
+  --bg-surface-elevated: rgba(26, 26, 32, 0.85);
+  --bg-card: rgba(20, 20, 24, 0.65);
+  --bg-card-hover: rgba(28, 28, 34, 0.8);
+  --bg-capsule: rgba(255, 255, 255, 0.05);
+
+  /* Borders & Grid */
+  --border-color: rgba(255, 255, 255, 0.10);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-focus: rgba(255, 255, 255, 0.35);
+  --grid-color: rgba(255, 255, 255, 0.06);
+  --focus-glow: rgba(255, 255, 255, 0.14);
+
+  /* Typography */
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
+  --text-inverted: #0a0a0c;
 
-  --accent-primary: #3b82f6;
-  --accent-hover: #2563eb;
-  --accent-glow: rgba(59, 130, 246, 0.25);
+  /* Overlays & Shadows */
+  --overlay-bg: linear-gradient(180deg, rgba(10, 10, 12, 0.94) 0%, rgba(10, 10, 12, 0.72) 45%, rgba(10, 10, 12, 0.94) 100%);
+  --shadow-bento: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 25px rgba(255, 255, 255, 0.06);
 
-  /* Graph & State Machine Status Colors (per UIUX spec) */
-  --status-unevaluated: #94a3b8;      /* Grey */
-  --status-suspected: #ef4444;        /* Red */
-  --status-pending: #f59e0b;          /* Yellow/Amber */
-  --status-verified: #10b981;         /* Green */
-  --status-updated: #3b82f6;          /* Blue */
+  /* Icon tokens */
+  --icon-stroke: #f8fafc;
+  --icon-trail: rgba(148, 163, 184, 0.55);
 
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
+  /* Marker Highlight tokens */
+  --marker-color: #facc15;
+  --marker-text-color: #171717;
+
+  /* Verification & State Machine statuses */
+  --status-unevaluated: #94a3b8;
+  --status-suspected: #f87171;
+  --status-pending: #fbbf24;
+  --status-verified: #34d399;
+  --status-updated: #60a5fa;
+
+  /* Radii */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-bento: 28px;
   --radius-full: 9999px;
-  
-  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
-  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
+
+html.light,
+[data-theme="light"] {
+  /* Surfaces */
+  --bg-main: #f8fafc;
+  --bg-surface: rgba(255, 255, 255, 0.9);
+  --bg-surface-elevated: #ffffff;
+  --bg-card: rgba(255, 255, 255, 0.85);
+  --bg-card-hover: #ffffff;
+  --bg-capsule: rgba(15, 23, 42, 0.05);
+
+  /* Borders & Grid */
+  --border-color: rgba(15, 23, 42, 0.12);
+  --border-subtle: rgba(15, 23, 42, 0.06);
+  --border-focus: rgba(15, 23, 42, 0.45);
+  --grid-color: rgba(17, 17, 17, 0.08);
+  --focus-glow: rgba(15, 23, 42, 0.12);
+
+  /* Typography */
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --text-inverted: #f8fafc;
+
+  /* Overlays & Shadows */
+  --overlay-bg: linear-gradient(180deg, rgba(248, 250, 252, 0.96) 0%, rgba(241, 245, 249, 0.68) 45%, rgba(248, 250, 252, 0.96) 100%);
+  --shadow-bento: 0 10px 30px -10px rgba(15, 23, 42, 0.08);
+  --shadow-glow: 0 0 25px rgba(15, 23, 42, 0.04);
+
+  /* Icon tokens */
+  --icon-stroke: #111827;
+  --icon-trail: rgba(30, 41, 59, 0.42);
+
+  /* Verification & State Machine statuses */
+  --status-unevaluated: #64748b;
+  --status-suspected: #dc2626;
+  --status-pending: #d97706;
+  --status-verified: #059669;
+  --status-updated: #2563eb;
+}
+
+/* ==========================================================================
+   BASE RESET & TYPOGRAPHY
+   ========================================================================== */
 
 * {
   box-sizing: border-box;
@@ -41,35 +110,100 @@
   padding: 0;
 }
 
-body {
+html, body {
+  min-height: 100vh;
   font-family: var(--font-sans);
   background-color: var(--bg-main);
   color: var(--text-primary);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  min-height: 100vh;
-  overflow-x: hidden;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
-/* Glassmorphism containers */
-.glass-panel {
-  background: var(--bg-surface-glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-glass);
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
 }
 
-/* Layout */
+h1 {
+  font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+  font-weight: 700;
+}
+
+h2 {
+  font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+}
+
+h3 {
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+}
+
+p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+code, pre, .font-mono {
+  font-family: var(--font-mono);
+}
+
+/* ==========================================================================
+   BENTO BLUEPRINT GRID BACKGROUND
+   ========================================================================== */
+
+.bento-viewport-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.bento-grid-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+  background-size: 22px 22px;
+  background-position: 0 0, 0 0;
+  mask-image: 
+    repeating-linear-gradient(to right, black 0px, black 3px, transparent 3px, transparent 8px),
+    repeating-linear-gradient(to bottom, black 0px, black 3px, transparent 3px, transparent 8px);
+  -webkit-mask-image: 
+    repeating-linear-gradient(to right, black 0px, black 3px, transparent 3px, transparent 8px),
+    repeating-linear-gradient(to bottom, black 0px, black 3px, transparent 3px, transparent 8px);
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
+}
+
+.bento-overlay-gradient {
+  position: absolute;
+  inset: 0;
+  background: var(--overlay-bg);
+}
+
+/* ==========================================================================
+   LAYOUT STRUCTURE
+   ========================================================================== */
+
 .app-container {
   display: flex;
   min-height: 100vh;
+  position: relative;
+  z-index: 1;
 }
 
 .sidebar {
-  width: 260px;
+  width: 270px;
   background-color: var(--bg-surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
@@ -78,69 +212,161 @@ body {
   bottom: 0;
   left: 0;
   z-index: 100;
+  transition: background-color 0.4s ease, border-color 0.4s ease;
 }
 
 .main-content {
-  margin-left: 260px;
+  margin-left: 270px;
   flex: 1;
-  padding: 32px 48px;
-  max-width: 1400px;
-  width: calc(100% - 260px);
+  padding: clamp(1.5rem, 4vw, 3rem);
+  max-width: 1440px;
+  width: calc(100% - 270px);
+  position: relative;
+  z-index: 2;
 }
 
-/* Typography */
-h1 {
-  font-size: 1.85rem;
-  font-weight: 700;
+@media (max-width: 860px) {
+  .sidebar {
+    width: 72px;
+  }
+  .main-content {
+    margin-left: 72px;
+    width: calc(100% - 72px);
+    padding: 1.5rem 1rem;
+  }
+}
+
+/* ==========================================================================
+   BENTO COMPONENTS: CARDS, PILLS & METRICS
+   ========================================================================== */
+
+.bento-card,
+.glass-panel {
+  position: relative;
+  background: var(--bg-card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-bento);
+  box-shadow: var(--shadow-bento);
+  padding: clamp(1.2rem, 3vw, 2.2rem);
+  overflow: hidden;
+  transition: border-color 0.3s ease, background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.bento-card:hover {
+  border-color: var(--border-focus);
+}
+
+/* Interactive Cursor Spotlight Glow */
+.bento-card-glow {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background: radial-gradient(220px circle at var(--bento-x, 50%) var(--bento-y, 50%), var(--focus-glow), transparent 70%);
+}
+
+.bento-card:hover .bento-card-glow,
+.bento3-card:hover .bento-card-glow {
+  opacity: 1;
+}
+
+/* Bento Pill & Capsule */
+.bento-capsule {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-color);
+  background: var(--bg-capsule);
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.4em;
   color: var(--text-primary);
-  margin-bottom: 8px;
-  letter-spacing: -0.02em;
+  transition: all 0.3s ease;
 }
 
-h2 {
+.bento-capsule-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08);
+}
+
+/* Bento Metric Tile */
+.bento-metric-tile {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 22px;
+  padding: 1.25rem 1.5rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.bento-metric-tile:hover {
+  border-color: var(--border-focus);
+}
+
+.bento-metric-tile .label {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: var(--text-muted);
+}
+
+.bento-metric-tile .value {
+  margin-top: 6px;
+  display: block;
   font-size: 1.35rem;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   color: var(--text-primary);
-  margin-bottom: 16px;
+  font-family: var(--font-mono);
 }
 
-h3 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 12px;
-}
+/* ==========================================================================
+   BUTTONS & CONTROLS
+   ========================================================================== */
 
-p {
-  color: var(--text-secondary);
-  font-size: 0.95rem;
-}
-
-/* Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  font-family: var(--font-sans);
   font-weight: 500;
   font-size: 0.875rem;
-  padding: 8px 16px;
-  border-radius: var(--radius-md);
-  border: 1px solid transparent;
+  padding: 9px 18px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-primary);
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   text-decoration: none;
+  letter-spacing: 0.02em;
+}
+
+.btn:hover {
+  border-color: var(--border-focus);
+  background: var(--bg-capsule);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-  color: #fff;
-  box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
+  background: var(--text-primary);
+  color: var(--text-inverted);
+  border-color: var(--text-primary);
+  font-weight: 600;
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
-  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.45);
+  opacity: 0.92;
   transform: translateY(-1px);
 }
 
@@ -151,82 +377,436 @@ p {
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: var(--border-focus);
 }
 
 .btn-danger {
-  background: rgba(239, 68, 68, 0.15);
+  background: rgba(239, 68, 68, 0.12);
   color: #f87171;
-  border-color: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.25);
 }
 
 .btn-danger:hover {
-  background: rgba(239, 68, 68, 0.25);
-  border-color: rgba(239, 68, 68, 0.5);
+  background: rgba(239, 68, 68, 0.22);
+  border-color: rgba(239, 68, 68, 0.45);
 }
 
-/* Badges */
+/* Bento Theme Toggle */
+.bento-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  height: 42px;
+  padding: 0 16px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface-elevated);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.bento-theme-toggle:hover {
+  border-color: var(--border-focus);
+}
+
+.bento-theme-toggle-dot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+}
+
+.bento-theme-toggle-dot::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  opacity: 0.4;
+}
+
+.bento-theme-toggle-dot span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: currentColor;
+  transition: all 0.3s ease;
+}
+
+/* Form Inputs */
+input[type="text"],
+input[type="search"],
+textarea,
+select {
+  width: 100%;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.925rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+input[type="text"]:focus,
+input[type="search"]:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px var(--focus-glow);
+}
+
+/* ==========================================================================
+   STATUS BADGES (5-STATE SPEC)
+   ========================================================================== */
+
 .badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px;
+  padding: 4px 12px;
   border-radius: var(--radius-full);
-  font-size: 0.75rem;
+  font-size: 0.725rem;
   font-weight: 600;
-  text-transform: capitalize;
-  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border: 1px solid transparent;
 }
 
 .badge-unevaluated {
   background: rgba(148, 163, 184, 0.12);
   color: var(--status-unevaluated);
-  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-color: rgba(148, 163, 184, 0.25);
 }
 
 .badge-suspected {
   background: rgba(239, 68, 68, 0.12);
   color: var(--status-suspected);
-  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.28);
 }
 
 .badge-pending {
   background: rgba(245, 158, 11, 0.12);
   color: var(--status-pending);
-  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-color: rgba(245, 158, 11, 0.28);
 }
 
 .badge-verified {
   background: rgba(16, 185, 129, 0.12);
   color: var(--status-verified);
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-color: rgba(16, 185, 129, 0.28);
 }
 
 .badge-updated {
   background: rgba(59, 130, 246, 0.12);
   color: var(--status-updated);
-  border: 1px solid rgba(59, 130, 246, 0.25);
+  border-color: rgba(59, 130, 246, 0.28);
 }
 
-/* Form inputs */
-input[type="text"], textarea, select {
+/* ==========================================================================
+   ANIMATED BENTO VECTOR ICONS (Orbit, Relay, Wave, Spark, Loop)
+   ========================================================================== */
+
+.bento3-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: clamp(2.75rem, 6vw, 3.25rem);
+  width: clamp(2.75rem, 6vw, 3.25rem);
+  border-radius: 9999px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.bento3-icon::before,
+.bento3-icon::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: inherit;
+  border: 1px solid var(--icon-trail);
+  opacity: 0.45;
+}
+
+.bento3-icon::after {
+  inset: 10px;
+  opacity: 0.2;
+}
+
+/* Orbit */
+.bento3-icon[data-variant="orbit"] span {
+  position: absolute;
+  height: 140%;
+  width: 3px;
+  background: linear-gradient(180deg, transparent, var(--icon-stroke) 55%, transparent);
+  transform-origin: center;
+  animation: bento3-flare 8s linear infinite;
+}
+
+/* Relay */
+.bento3-icon[data-variant="relay"] span {
+  position: absolute;
+  inset: 18px;
+  border-top: 1px solid var(--icon-stroke);
+  border-bottom: 1px solid var(--icon-stroke);
+  transform: skewX(-15deg);
+}
+
+.bento3-icon[data-variant="relay"] span::before,
+.bento3-icon[data-variant="relay"] span::after {
+  content: "";
+  position: absolute;
+  height: 1px;
+  width: 120%;
+  left: -10%;
+  background: linear-gradient(90deg, transparent, var(--icon-stroke), transparent);
+  animation: bento3-dash 2.6s ease-in-out infinite;
+}
+
+.bento3-icon[data-variant="relay"] span::after {
+  top: 70%;
+  animation-delay: 0.9s;
+}
+
+/* Wave */
+.bento3-icon[data-variant="wave"] span {
+  position: absolute;
+  inset: 12px;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.bento3-icon[data-variant="wave"] span::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 5%, var(--icon-stroke) 50%, transparent 95%);
+  transform: translateX(-45%);
+  animation: bento3-wave 2.8s ease-in-out infinite alternate;
+}
+
+/* Spark */
+.bento3-icon[data-variant="spark"] span {
+  position: absolute;
+  inset: 0;
+}
+
+.bento3-icon[data-variant="spark"] span::before,
+.bento3-icon[data-variant="spark"] span::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border-radius: 9999px;
+  border: 1px solid var(--icon-stroke);
+  opacity: 0.28;
+  animation: bento3-pulse 2.8s ease-out infinite;
+}
+
+.bento3-icon[data-variant="spark"] span::after {
+  animation-delay: 0.9s;
+}
+
+/* Loop */
+.bento3-icon[data-variant="loop"] span {
+  position: absolute;
+  inset: 12px;
+}
+
+.bento3-icon[data-variant="loop"] span::before,
+.bento3-icon[data-variant="loop"] span::after {
+  content: "";
+  position: absolute;
+  height: 1px;
   width: 100%;
-  background: var(--bg-surface-elevated);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 10px 14px;
-  color: var(--text-primary);
-  font-family: inherit;
-  font-size: 0.925rem;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  top: 50%;
+  left: 0;
+  background: linear-gradient(90deg, transparent, var(--icon-stroke), transparent);
 }
 
-input[type="text"]:focus, textarea:focus, select:focus {
-  border-color: var(--border-focus);
-  box-shadow: 0 0 0 3px var(--accent-glow);
+.bento3-icon[data-variant="loop"] span::before {
+  transform: rotate(90deg);
 }
+
+.bento3-icon[data-variant="loop"] span::after {
+  opacity: 0.4;
+  transform: rotate(0deg);
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Keyframes */
+@keyframes bento3-card-in {
+  0% { opacity: 0; transform: translate3d(0, 28px, 0) scale(0.97); filter: blur(12px); }
+  60% { filter: blur(0); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); filter: blur(0); }
+}
+
+@keyframes bento3-flare {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes bento3-dash {
+  0% { transform: translateX(-25%); opacity: 0; }
+  30% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { transform: translateX(25%); opacity: 0; }
+}
+
+@keyframes bento3-wave {
+  0% { transform: translateX(-45%); }
+  100% { transform: translateX(45%); }
+}
+
+@keyframes bento3-pulse {
+  0% { transform: scale(0.8); opacity: 0.6; }
+  70% { opacity: 0.05; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+
+/* ==========================================================================
+   CSS UTILITY CLASSES (Ensuring 100% compatibility with Bento JSX components)
+   ========================================================================== */
+
+.relative { position: relative; }
+.absolute { position: absolute; }
+.fixed { position: fixed; }
+.inset-0 { inset: 0; }
+.z-10 { z-index: 10; }
+.z-20 { z-index: 20; }
+.-z-10 { z-index: -10; }
+.-z-20 { z-index: -20; }
+.w-full { width: 100%; }
+.max-w-xl { max-width: 36rem; }
+.max-w-2xl { max-width: 42rem; }
+.max-w-6xl { max-width: 72rem; }
+.min-h-screen { min-height: 100vh; }
+.mx-auto { margin-left: auto; margin-right: auto; }
+.overflow-hidden { overflow: hidden; }
+.pointer-events-none { pointer-events: none; }
+.cursor-pointer { cursor: pointer; }
+
+.flex { display: flex; }
+.inline-flex { display: inline-flex; }
+.flex-col { flex-direction: column; }
+.flex-row { flex-direction: row; }
+.flex-wrap { flex-wrap: wrap; }
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.items-end { align-items: flex-end; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.shrink-0 { flex-shrink: 0; }
+.grow { flex-grow: 1; }
+
+.grid { display: grid; }
+.grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+
+@media (min-width: 640px) {
+  .sm\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sm\:flex-row { flex-direction: row; }
+  .sm\:items-center { align-items: center; }
+  .sm\:justify-between { justify-content: space-between; }
+  .sm\:text-left { text-align: left; }
+  .sm\:text-right { text-align: right; }
+}
+
+@media (min-width: 768px) {
+  .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .md\:flex-row { flex-direction: row; }
+  .md\:items-end { align-items: flex-end; }
+  .md\:items-center { align-items: center; }
+  .md\:justify-between { justify-content: space-between; }
+  .md\:gap-16 { gap: 4rem; }
+  .md\:gap-6 { gap: 1.5rem; }
+}
+
+@media (min-width: 1024px) {
+  .lg\:flex-row { flex-direction: row; }
+  .lg\:items-start { align-items: flex-start; }
+  .lg\:flex-1 { flex: 1 1 0%; }
+  .lg\:ml-auto { margin-left: auto; }
+  .lg\:mt-0 { margin-top: 0; }
+  .lg\:h-16 { height: 4rem; }
+  .lg\:w-16 { width: 4rem; }
+}
+
+@media (min-width: 1280px) {
+  .xl\:gap-8 { gap: 2rem; }
+}
+
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; }
+.gap-5 { gap: 1.25rem; }
+.gap-10 { gap: 2.5rem; }
+.gap-12 { gap: 3rem; }
+
+.p-4 { padding: 1rem; }
+.p-6 { padding: 1.5rem; }
+.px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+.px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
+.py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+.py-2\.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; }
+.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+.py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+.py-24 { padding-top: 6rem; padding-bottom: 6rem; }
+.pt-8 { padding-top: 2rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-4 { margin-top: 1rem; }
+.mt-8 { margin-top: 2rem; }
+
+.rounded-full { border-radius: 9999px; }
+.rounded-\[22px\] { border-radius: 22px; }
+.rounded-\[28px\] { border-radius: 28px; }
+
+.border { border-width: 1px; border-style: solid; }
+.border-t { border-top-width: 1px; border-top-style: solid; }
+.border-dashed { border-style: dashed; }
+
+.text-xs { font-size: 0.75rem; line-height: 1rem; }
+.text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+.text-base { font-size: 1rem; line-height: 1.5rem; }
+.text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+.text-2xl { font-size: 1.5rem; line-height: 2rem; }
+.text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+.text-center { text-align: center; }
+.font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.uppercase { text-transform: uppercase; }
+
+.tracking-\[0\.22em\] { letter-spacing: 0.22em; }
+.tracking-\[0\.25em\] { letter-spacing: 0.25em; }
+.tracking-\[0\.3em\] { letter-spacing: 0.3em; }
+.tracking-\[0\.35em\] { letter-spacing: 0.35em; }
+.tracking-\[0\.4em\] { letter-spacing: 0.4em; }
+.tracking-\[0\.5em\] { letter-spacing: 0.5em; }
+
+.transition { transition: all 0.2s ease; }
+.transition-colors { transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease; }
+.transition-all { transition: all 0.4s ease; }
+.duration-500 { transition-duration: 500ms; }
+.duration-700 { transition-duration: 700ms; }
 
 /* Scrollbars */
 ::-webkit-scrollbar {
@@ -237,9 +817,84 @@ input[type="text"]:focus, textarea:focus, select:focus {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--border-color);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: var(--border-focus);
 }
+
+/* ==========================================================================
+   MARKER HIGHLIGHT (CURSOR HOVER & INTERACTION)
+   ========================================================================== */
+
+.cursor-marker-highlight,
+.marker-highlight,
+.marker-on-hover {
+  position: relative;
+  display: inline-block;
+  padding: 0 0.12em;
+  margin: 0 -0.04em;
+  cursor: pointer;
+  transition: color 0.18s ease;
+}
+
+.cursor-marker-highlight::before,
+.marker-highlight::before,
+.marker-on-hover::before {
+  content: "";
+  position: absolute;
+  inset: 0.08em -0.08em;
+  background: var(--marker-color, #facc15);
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 0;
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+.cursor-marker-highlight:hover::before,
+.marker-highlight:hover::before,
+.marker-on-hover:hover::before,
+.cursor-marker-highlight.active::before {
+  transform: scaleX(1);
+  box-shadow: 0 1px 8px rgba(250, 204, 21, 0.45);
+}
+
+.cursor-marker-highlight:hover,
+.marker-highlight:hover,
+.marker-on-hover:hover,
+.cursor-marker-highlight.active {
+  color: var(--marker-text-color, #171717) !important;
+}
+
+.cursor-marker-highlight > *,
+.marker-highlight > *,
+.marker-on-hover > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Cyan / Blue Marker Variant */
+.marker-cyan::before {
+  background: #38bdf8 !important;
+}
+.marker-cyan:hover::before {
+  box-shadow: 0 1px 8px rgba(56, 189, 248, 0.45) !important;
+}
+.marker-cyan:hover {
+  color: #0f172a !important;
+}
+
+/* Green / Emerald Marker Variant */
+.marker-green::before {
+  background: #4ade80 !important;
+}
+.marker-green:hover::before {
+  box-shadow: 0 1px 8px rgba(74, 222, 128, 0.45) !important;
+}
+.marker-green:hover {
+  color: #052e16 !important;
+}
+

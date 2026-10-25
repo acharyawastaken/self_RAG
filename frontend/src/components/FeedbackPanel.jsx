@@ -79,7 +79,7 @@ export default function FeedbackPanel({ queryId, onFeedbackSubmitted }) {
                   borderRadius: 'var(--radius-md)',
                   border: isSelected ? `2px solid ${r.color}` : '1px solid var(--border-color)',
                   background: isSelected ? `${r.color}20` : 'var(--bg-surface-elevated)',
-                  color: isSelected ? '#fff' : 'var(--text-secondary)',
+                  color: isSelected ? 'var(--text-primary)' : 'var(--text-secondary)',
                   fontWeight: isSelected ? 600 : 500,
                   fontSize: '0.85rem',
                   cursor: 'pointer',

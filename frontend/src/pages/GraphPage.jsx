@@ -15,8 +15,10 @@ import {
   Info, 
   X,
   Layers,
-  Sparkles
+  Sparkles,
+  ExternalLink
 } from 'lucide-react';
+
 import { apiClient } from '../api/client';
 import StatusBadge from '../components/StatusBadge';
 
@@ -297,12 +299,12 @@ export default function GraphPage() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', height: 'calc(100vh - 70px)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
         <div>
           <h1 style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <Compass className="icon-pulse" size={28} style={{ color: '#8b5cf6' }} />
+            <Compass className="icon-pulse" size={28} style={{ color: 'var(--text-primary)' }} />
             Obsidian 3D Knowledge Graph
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
@@ -318,29 +320,41 @@ export default function GraphPage() {
               gap: '8px',
               padding: '6px 14px',
               borderRadius: 'var(--radius-full)',
-              background: 'rgba(139, 92, 246, 0.12)',
-              border: '1px solid rgba(139, 92, 246, 0.3)',
+              background: 'var(--bg-capsule)',
+              border: '1px solid var(--border-color)',
               fontSize: '0.8rem',
-              color: '#c4b5fd',
+              color: 'var(--text-secondary)',
             }}>
               <FolderOpen size={14} />
-              <span>Obsidian Vault: <strong>{vaultInfo.notes_count} Notes</strong></span>
+              <span>Obsidian Vault: <strong style={{ color: 'var(--text-primary)' }}>{vaultInfo.notes_count} Notes</strong></span>
             </div>
           )}
+
+          <a
+            href="http://localhost:8000/graph/view"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-primary"
+            title="Open standalone 3D Obsidian graph via REST API endpoint in a separate window/tab"
+          >
+            <ExternalLink size={16} />
+            <span>Open in Tab (REST API)</span>
+          </a>
 
           <button
             onClick={() => setAutoRotate(!autoRotate)}
             className="btn btn-secondary"
             style={{
-              background: autoRotate ? 'rgba(59, 130, 246, 0.25)' : undefined,
-              borderColor: autoRotate ? '#3b82f6' : undefined,
-              color: autoRotate ? '#60a5fa' : undefined,
+              background: autoRotate ? 'var(--bg-card-hover)' : undefined,
+              borderColor: autoRotate ? 'var(--border-focus)' : undefined,
+              color: autoRotate ? 'var(--text-primary)' : undefined,
             }}
             title="Auto-rotate graph in 3D orbit"
           >
             <RotateCw size={16} className={autoRotate ? 'spin' : ''} />
             <span>{autoRotate ? 'Orbit: ON' : 'Orbit: OFF'}</span>
           </button>
+
 
           <button
             onClick={handleResetCamera}
@@ -469,7 +483,7 @@ export default function GraphPage() {
       </div>
 
       {/* Main 3D Canvas Area */}
-      <div style={{ flex: 1, position: 'relative', borderRadius: 'var(--radius-lg)', overflow: 'hidden', border: '1px solid var(--border-color)' }}>
+      <div style={{ height: '80vh', minHeight: '80vh', flexShrink: 0, position: 'relative', borderRadius: 'var(--radius-lg)', overflow: 'hidden', border: '1px solid var(--border-color)' }}>
         {/* 3D Force Graph WebGL Container */}
         <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
 
@@ -490,7 +504,7 @@ export default function GraphPage() {
             gap: '12px',
             zIndex: 10,
           }}>
-            <RefreshCw className="spin" size={32} style={{ color: '#8b5cf6' }} />
+            <RefreshCw className="spin" size={32} style={{ color: 'var(--text-primary)' }} />
             <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
               Simulating 3D Obsidian Physics...
             </span>
@@ -515,7 +529,7 @@ export default function GraphPage() {
           boxShadow: 'var(--shadow-glass)',
         }}>
           <div style={{ fontWeight: 600, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Sparkles size={14} style={{ color: '#8b5cf6' }} />
+            <Sparkles size={14} style={{ color: 'var(--text-primary)' }} />
             3D Navigation
           </div>
           <div style={{ color: 'var(--text-muted)' }}>• <strong>Left Click + Drag:</strong> Rotate 3D Orbit</div>
@@ -551,7 +565,7 @@ export default function GraphPage() {
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
                 <span style={{ color: 'var(--text-secondary)' }}>Link Distance</span>
-                <span style={{ color: '#60a5fa' }}>{linkDistance}</span>
+                <span style={{ color: 'var(--text-primary)' }}>{linkDistance}</span>
               </div>
               <input
                 type="range"
@@ -559,14 +573,14 @@ export default function GraphPage() {
                 max="300"
                 value={linkDistance}
                 onChange={(e) => setLinkDistance(Number(e.target.value))}
-                style={{ width: '100%', accentColor: '#8b5cf6' }}
+                style={{ width: '100%', accentColor: 'var(--text-primary)' }}
               />
             </div>
 
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
                 <span style={{ color: 'var(--text-secondary)' }}>Node Repulsion</span>
-                <span style={{ color: '#60a5fa' }}>{chargeStrength}</span>
+                <span style={{ color: 'var(--text-primary)' }}>{chargeStrength}</span>
               </div>
               <input
                 type="range"
@@ -574,7 +588,7 @@ export default function GraphPage() {
                 max="-50"
                 value={chargeStrength}
                 onChange={(e) => setChargeStrength(Number(e.target.value))}
-                style={{ width: '100%', accentColor: '#8b5cf6' }}
+                style={{ width: '100%', accentColor: 'var(--text-primary)' }}
               />
             </div>
           </div>
@@ -615,7 +629,7 @@ export default function GraphPage() {
             {selectedEntity.type === 'node' ? (
               <>
                 <div>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#fff', marginBottom: '6px' }}>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>
                     {selectedEntity.data.label}
                   </h3>
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
@@ -651,7 +665,7 @@ export default function GraphPage() {
             ) : (
               <>
                 <div>
-                  <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#fff', marginBottom: '6px' }}>
+                  <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>
                     {selectedEntity.data.relation.replace(/_/g, ' ').toUpperCase()}
                   </h3>
                   <StatusBadge status={selectedEntity.data.status} />

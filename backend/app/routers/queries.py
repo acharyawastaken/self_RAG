@@ -173,6 +173,8 @@ def ask_question(
         db.commit()
         raise HTTPException(status_code=503, detail=str(e))
     except Exception as e:
+        import logging
+        logging.getLogger("uvicorn.error").exception("Query %s failed", query_id)
         query_record.status = QueryStatus.FAILED.value
         query_record.error_message = str(e)
         db.commit()

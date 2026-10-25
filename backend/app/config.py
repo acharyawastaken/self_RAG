@@ -24,22 +24,21 @@ class Settings(BaseSettings):
     # --- Models ------------------------------------------------------------
     ollama_host: str = "http://localhost:11434"
     llm_model: str = "llama3:latest"
-    llm_timeout_s: float = 180.0
+    llm_timeout_s: float = 90.0
     llm_temperature: float = 0.1
-    # bge-small handles 512 word-pieces (MiniLM truncates at 256), so chunks of
-    # ~350 tokens are embedded in full.
+    # bge-small handles 512 word-pieces; 300 token chunks ensure complete representation.
     embedding_model: str = "BAAI/bge-small-en-v1.5"
     embedding_query_prefix: str = "Represent this sentence for searching relevant passages: "
 
     # --- Chunking ----------------------------------------------------------
-    chunk_size_tokens: int = 350
-    chunk_overlap_tokens: int = 60
+    chunk_size_tokens: int = 300
+    chunk_overlap_tokens: int = 45
 
     # --- Retrieval ---------------------------------------------------------
-    top_k: int = 5
-    lesson_top_k: int = 3
-    min_lesson_similarity: float = 0.55
-    weak_evidence_similarity: float = 0.45
+    top_k: int = 3
+    lesson_top_k: int = 2
+    min_lesson_similarity: float = 0.60
+    weak_evidence_similarity: float = 0.40
 
     # --- Upload limits -----------------------------------------------------
     max_upload_mb: int = 25

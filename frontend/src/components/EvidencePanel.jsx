@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, BookOpen, ExternalLink, Sparkles } from 'lucide-react';
+import { CursorMarkerHighlight } from '@/components/ui/marker-highlight';
 
 export default function EvidencePanel({ evidence = [], lessonsUsed = [] }) {
   const [isOpen, setIsOpen] = useState(true);
@@ -60,8 +61,9 @@ export default function EvidencePanel({ evidence = [], lessonsUsed = [] }) {
                     border: '1px solid rgba(16, 185, 129, 0.25)',
                     fontSize: '0.85rem'
                   }}>
-                    <div style={{ fontWeight: 600, color: '#34d399', marginBottom: '4px' }}>
-                      [L{idx + 1}] {l.title}
+                    <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <CursorMarkerHighlight highlight={`[L${idx + 1}]`} markerColor="#34d399" highlightedTextColor="#064e3b" />
+                      <span>{l.title}</span>
                     </div>
                     <div style={{ color: 'var(--text-secondary)' }}>
                       {l.correction_text}
@@ -101,8 +103,9 @@ export default function EvidencePanel({ evidence = [], lessonsUsed = [] }) {
                       fontSize: '0.75rem',
                       color: 'var(--text-muted)'
                     }}>
-                      <span style={{ fontWeight: 600, color: '#60a5fa' }}>
-                        [C{c.rank_position}] {c.filename} {c.section_title ? `• ${c.section_title}` : ''} {c.page_start ? `(p. ${c.page_start})` : ''}
+                      <span style={{ fontWeight: 600, color: 'var(--text-primary)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                        <CursorMarkerHighlight highlight={`[C${c.rank_position}]`} markerColor="#38bdf8" highlightedTextColor="#0f172a" />
+                        <span>{c.filename} {c.section_title ? `• ${c.section_title}` : ''} {c.page_start ? `(p. ${c.page_start})` : ''}</span>
                       </span>
                       <span>Similarity: {(c.similarity_score * 100).toFixed(1)}%</span>
                     </div>

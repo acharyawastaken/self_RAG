@@ -3,16 +3,105 @@ import {
   Send, 
   HelpCircle, 
   AlertTriangle, 
-  BookOpen, 
   Sparkles, 
-  CheckCircle2, 
   History, 
-  Clock, 
-  Filter
+  Filter,
+  Copy,
+  Check,
+  Bot,
+  User,
+  Lightbulb,
+  ArrowRight
 } from 'lucide-react';
 import { apiClient } from '../api/client';
 import EvidencePanel from '../components/EvidencePanel';
 import FeedbackPanel from '../components/FeedbackPanel';
+import { CursorMarkerHighlight } from '@/components/ui/marker-highlight';
+
+const SUGGESTED_PROMPTS = [
+  {
+    category: "Search & Optimization",
+    prefix: "Explain how ",
+    highlight: "heuristic consistency",
+    suffix: " guarantees optimality in A* graph search.",
+    markerColor: "#facc15",
+  },
+  {
+    category: "Hybrid Retrieval",
+    prefix: "How does ",
+    highlight: "hybrid evidence retrieval",
+    suffix: " fuse BM25 keyword search with ChromaDB vectors?",
+    markerColor: "#38bdf8",
+  },
+  {
+    category: "Knowledge Graphs",
+    prefix: "What role does ",
+    highlight: "neuro-symbolic graph grounding",
+    suffix: " play in eliminating LLM hallucinations?",
+    markerColor: "#34d399",
+  },
+];
+
+/**
+ * Intelligent parser that detects citations [C1], [C2], [L1], and bold terms
+ * and turns them into interactive cursor marker highlights that sweep across on hover.
+ */
+function FormattedGroundedAnswer({ text }) {
+  if (!text) return null;
+
+  // Split text by citations and bold markdown
+  const parts = text.split(/(\[C\d+\]|\[L\d+\]|\*\*.*?\*\*)/g);
+
+  return (
+    <div style={{ lineHeight: 1.7, fontSize: '1.02rem', color: 'var(--text-primary)' }}>
+      {parts.map((part, index) => {
+        if (!part) return null;
+
+        // Chunk citation [C1], [C2]...
+        if (/^\[C\d+\]$/.test(part)) {
+          return (
+            <CursorMarkerHighlight
+              key={index}
+              highlight={part}
+              markerColor="#38bdf8"
+              highlightedTextColor="#0f172a"
+              style={{ fontWeight: 600, margin: '0 2px' }}
+            />
+          );
+        }
+
+        // Lesson citation [L1], [L2]...
+        if (/^\[L\d+\]$/.test(part)) {
+          return (
+            <CursorMarkerHighlight
+              key={index}
+              highlight={part}
+              markerColor="#34d399"
+              highlightedTextColor="#064e3b"
+              style={{ fontWeight: 600, margin: '0 2px' }}
+            />
+          );
+        }
+
+        // Bold concepts **term**
+        if (part.startsWith('**') && part.endsWith('**') && part.length > 4) {
+          const innerTerm = part.slice(2, -2);
+          return (
+            <CursorMarkerHighlight
+              key={index}
+              highlight={innerTerm}
+              markerColor="#facc15"
+              highlightedTextColor="#171717"
+              style={{ fontWeight: 600 }}
+            />
+          );
+        }
+
+        return <span key={index}>{part}</span>;
+      })}
+    </div>
+  );
+}
 
 export default function AskPage() {
   const [question, setQuestion] = useState('');
@@ -22,6 +111,7 @@ export default function AskPage() {
   const [currentQuery, setCurrentQuery] = useState(null);
   const [error, setError] = useState(null);
   const [history, setHistory] = useState([]);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     apiClient.getDocuments().then(setDocuments).catch(() => {});
@@ -29,7 +119,7 @@ export default function AskPage() {
   }, []);
 
   const handleAsk = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     if (!question.trim()) return;
 
     setLoading(true);
@@ -50,41 +140,138 @@ export default function AskPage() {
     }
   };
 
+  const handleSelectSuggested = (promptObj) => {
+    const fullText = `${promptObj.prefix}${promptObj.highlight}${promptObj.suffix}`;
+    setQuestion(fullText);
+  };
+
   const loadPastQuery = async (queryId) => {
     try {
       setLoading(true);
       const res = await apiClient.getQuery(queryId);
       setCurrentQuery(res);
       setQuestion(res.question_text);
-    } catch (err) {
+    } catch {
       setError('Failed to load past query');
     } finally {
       setLoading(false);
     }
   };
 
+  const handleCopyAnswer = () => {
+    if (!currentQuery?.answer_text) return;
+    navigator.clipboard?.writeText(currentQuery.answer_text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
-    <div style={{ maxWidth: '980px' }}>
-      {/* Page Title */}
-      <div style={{ marginBottom: '28px' }}>
-        <h1>Ask & Answers</h1>
-        <p>Ask questions from your indexed course documents. Answers are strictly grounded in retrieved evidence and prior verified lessons.</p>
+    <div style={{ maxWidth: '980px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '28px' }}>
+      {/* Page Title & Context Header */}
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+          <span className="bento-capsule">
+            <span className="bento-capsule-dot" style={{ background: '#facc15' }} />
+            Grounded Q&A Engine
+          </span>
+          <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+            Multi-Lane RAG
+          </span>
+        </div>
+        <h1>
+          Ask & Inquire with{' '}
+          <CursorMarkerHighlight highlight="Verified Grounding" markerColor="#facc15" />
+        </h1>
+        <p style={{ marginTop: '6px' }}>
+          Ask questions from your indexed course documents. Answers are strictly synthesized against{' '}
+          <CursorMarkerHighlight highlight="retrieved evidence" markerColor="#38bdf8" highlightedTextColor="#0f172a" />{' '}
+          and prior{' '}
+          <CursorMarkerHighlight highlight="verified lessons" markerColor="#34d399" highlightedTextColor="#064e3b" />.
+        </p>
       </div>
 
-      {/* Question Form */}
-      <div className="glass-panel" style={{ padding: '24px', marginBottom: '28px' }}>
+      {/* Suggested Starter Prompts (shown when idle or prompt empty) */}
+      {!currentQuery && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            fontSize: '0.78rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.2em',
+            color: 'var(--text-muted)',
+            fontWeight: 600,
+          }}>
+            <Lightbulb size={14} color="#facc15" /> Suggested Queries (Hover to Highlight)
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px' }}>
+            {SUGGESTED_PROMPTS.map((item, idx) => (
+              <div
+                key={idx}
+                onClick={() => handleSelectSuggested(item)}
+                className="bento-card"
+                style={{
+                  padding: '16px 18px',
+                  borderRadius: 'var(--radius-lg)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '8px',
+                  transition: 'all 0.25s ease',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--text-muted)' }}>
+                    {item.category}
+                  </span>
+                  <ArrowRight size={13} color="var(--text-muted)" />
+                </div>
+                <div style={{ fontSize: '0.88rem', color: 'var(--text-primary)', lineHeight: 1.45 }}>
+                  {item.prefix}
+                  <CursorMarkerHighlight
+                    highlight={item.highlight}
+                    markerColor={item.markerColor}
+                    highlightedTextColor={item.markerColor === '#34d399' ? '#064e3b' : item.markerColor === '#38bdf8' ? '#0f172a' : '#171717'}
+                  />
+                  {item.suffix}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Chat Question Composer Card */}
+      <div className="bento-card" style={{ padding: '24px' }}>
         <form onSubmit={handleAsk}>
           <div style={{ marginBottom: '14px' }}>
-            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>
-              Your Question:
-            </label>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '8px'
+            }}>
+              <label style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                Your Question:
+              </label>
+              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
+                Grounding guaranteed by ChromaDB + BM25
+              </span>
+            </div>
             <textarea
               rows={3}
               placeholder="e.g. What is the evaluation function of A* search and how does consistency affect optimality?"
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
               disabled={loading}
-              style={{ resize: 'vertical' }}
+              style={{
+                resize: 'vertical',
+                background: 'var(--bg-surface-elevated)',
+                border: '1px solid var(--border-color)',
+                borderRadius: 'var(--radius-md)',
+                color: 'var(--text-primary)',
+              }}
             />
           </div>
 
@@ -94,9 +281,16 @@ export default function AskPage() {
               <select
                 value={selectedDocId}
                 onChange={(e) => setSelectedDocId(e.target.value)}
-                style={{ padding: '8px 12px', fontSize: '0.85rem' }}
+                style={{
+                  padding: '8px 14px',
+                  fontSize: '0.84rem',
+                  borderRadius: 'var(--radius-full)',
+                  border: '1px solid var(--border-color)',
+                  background: 'var(--bg-surface-elevated)',
+                  color: 'var(--text-primary)',
+                }}
               >
-                <option value="">All Uploaded Documents</option>
+                <option value="">All Uploaded Course Documents</option>
                 {documents.map((d) => (
                   <option key={d.document_id} value={d.document_id}>
                     {d.filename}
@@ -109,7 +303,7 @@ export default function AskPage() {
               type="submit"
               className="btn btn-primary"
               disabled={loading || !question.trim()}
-              style={{ minWidth: '140px' }}
+              style={{ minWidth: '150px' }}
             >
               {loading ? (
                 <>Retrieving & Thinking...</>
@@ -123,14 +317,14 @@ export default function AskPage() {
         </form>
       </div>
 
+      {/* Error Notice */}
       {error && (
         <div style={{
           padding: '14px 18px',
-          background: 'rgba(239, 68, 68, 0.15)',
-          border: '1px solid rgba(239, 68, 68, 0.3)',
+          background: 'rgba(239, 68, 68, 0.12)',
+          border: '1px solid rgba(239, 68, 68, 0.28)',
           borderRadius: 'var(--radius-md)',
           color: '#f87171',
-          marginBottom: '24px',
           fontSize: '0.9rem',
           display: 'flex',
           alignItems: 'center',
@@ -141,51 +335,145 @@ export default function AskPage() {
         </div>
       )}
 
-      {/* Answer Area */}
-      {currentQuery && (
+      {/* Thinking / Streaming Loading State */}
+      {loading && (
+        <div className="bento-card" style={{ padding: '32px', textAlign: 'center' }}>
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '48px',
+            height: '48px',
+            borderRadius: '9999px',
+            border: '1px solid var(--border-color)',
+            background: 'var(--bg-surface-elevated)',
+            marginBottom: '16px'
+          }}>
+            <Sparkles size={22} className="animate-spin" color="#facc15" />
+          </div>
+          <div style={{ fontWeight: 600, fontSize: '1.05rem', color: 'var(--text-primary)', marginBottom: '6px' }}>
+            Synthesizing Grounded Answer
+          </div>
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+            Querying dual retrieval lanes (BM25 + ChromaDB) and scanning{' '}
+            <CursorMarkerHighlight highlight="verified pedagogical memory" markerColor="#34d399" highlightedTextColor="#064e3b" />...
+          </div>
+        </div>
+      )}
+
+      {/* Answer & Conversation Turn Area */}
+      {currentQuery && !loading && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          {/* User Question Echo Bubble */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '12px',
+            padding: '16px 20px',
+            borderRadius: 'var(--radius-lg)',
+            background: 'var(--bg-surface-elevated)',
+            border: '1px solid var(--border-subtle)',
+          }}>
+            <div style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: '9999px',
+              background: 'var(--bg-capsule)',
+              border: '1px solid var(--border-color)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--text-primary)',
+              shrink: 0,
+            }}>
+              <User size={16} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-muted)', marginBottom: '4px' }}>
+                Your Question
+              </div>
+              <div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                {currentQuery.question_text}
+              </div>
+            </div>
+          </div>
+
           {/* Insufficient Evidence Warning Banner */}
           {currentQuery.is_insufficient_evidence && (
             <div style={{
               padding: '14px 18px',
-              background: 'rgba(245, 158, 11, 0.15)',
-              border: '1px solid rgba(245, 158, 11, 0.3)',
+              background: 'rgba(245, 158, 11, 0.12)',
+              border: '1px solid rgba(245, 158, 11, 0.28)',
               borderRadius: 'var(--radius-md)',
               color: '#fbbf24',
               display: 'flex',
               alignItems: 'center',
               gap: '12px',
-              fontSize: '0.9rem'
+              fontSize: '0.88rem'
             }}>
-              <AlertTriangle size={22} />
+              <AlertTriangle size={20} />
               <div>
                 <span style={{ fontWeight: 600 }}>Insufficient Context Notice: </span>
-                The available evidence in your course documents is weak or missing for this specific topic. The model was instructed not to fabricate ungrounded claims.
+                Retrieved chunks exhibit weak relevance. The model has avoided hallucinating and strictly notes the absence of direct documentation.
               </div>
             </div>
           )}
 
-          {/* Answer Card */}
-          <div className="glass-panel" style={{ padding: '28px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Sparkles size={14} color="#60a5fa" />
-                Model: <span style={{ color: 'var(--text-secondary)' }}>{currentQuery.model_name || 'Llama'}</span>
-                <span>•</span>
-                Prompt: <span style={{ color: 'var(--text-secondary)' }}>{currentQuery.prompt_version}</span>
+          {/* Assistant Answer Bento Card */}
+          <div className="bento-card" style={{ padding: '28px' }}>
+            {/* Header Telemetry Pill Bar */}
+            <div style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: '12px',
+              paddingBottom: '16px',
+              borderBottom: '1px solid var(--border-color)',
+              marginBottom: '20px',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{
+                  width: '28px',
+                  height: '28px',
+                  borderRadius: '9999px',
+                  border: '1px solid var(--border-color)',
+                  background: 'var(--bg-surface-elevated)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--text-primary)',
+                }}>
+                  <Bot size={15} />
+                </div>
+                <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                  Grounded Synthesis
+                </div>
+                <span style={{ color: 'var(--text-muted)' }}>•</span>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                  Model: <span style={{ color: 'var(--text-secondary)' }}>{currentQuery.model_name || 'Llama'}</span>
+                </span>
               </div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                {new Date(currentQuery.created_at).toLocaleTimeString()}
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <button
+                  type="button"
+                  onClick={handleCopyAnswer}
+                  className="btn btn-secondary"
+                  style={{ padding: '5px 12px', fontSize: '0.75rem' }}
+                >
+                  {copied ? <Check size={13} color="#34d399" /> : <Copy size={13} />}
+                  {copied ? 'Copied' : 'Copy Text'}
+                </button>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                  {new Date(currentQuery.created_at).toLocaleTimeString()}
+                </span>
               </div>
             </div>
 
-            <div style={{
-              fontSize: '1.05rem',
-              color: 'var(--text-primary)',
-              lineHeight: 1.65,
-              whiteSpace: 'pre-wrap',
-            }}>
-              {currentQuery.answer_text}
+            {/* Answer Content with Intelligent Cursor Marker Highlighting */}
+            <div style={{ marginBottom: '24px' }}>
+              <FormattedGroundedAnswer text={currentQuery.answer_text} />
             </div>
 
             {/* Evidence & Lessons Panel */}
@@ -194,7 +482,7 @@ export default function AskPage() {
               lessonsUsed={currentQuery.lessons_used}
             />
 
-            {/* Structured Feedback Panel */}
+            {/* Structured Feedback & Critic Panel */}
             <FeedbackPanel
               queryId={currentQuery.query_id}
               onFeedbackSubmitted={() => {}}
@@ -205,9 +493,19 @@ export default function AskPage() {
 
       {/* Recent Queries History */}
       {history.length > 0 && (
-        <div className="glass-panel" style={{ marginTop: '36px', padding: '20px 24px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '14px' }}>
-            <History size={16} /> Recent Inquiries
+        <div className="bento-card" style={{ padding: '20px 24px' }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '0.85rem',
+            fontWeight: 600,
+            color: 'var(--text-secondary)',
+            marginBottom: '14px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.15em',
+          }}>
+            <History size={15} /> Recent Inquiries
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {history.map((h) => (
@@ -218,18 +516,40 @@ export default function AskPage() {
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  padding: '10px 14px',
-                  borderRadius: 'var(--radius-sm)',
+                  padding: '12px 16px',
+                  borderRadius: 'var(--radius-md)',
                   background: 'var(--bg-surface-elevated)',
+                  border: '1px solid var(--border-subtle)',
                   cursor: 'pointer',
-                  fontSize: '0.85rem',
-                  transition: 'background 0.15s',
+                  fontSize: '0.86rem',
+                  transition: 'border-color 0.2s, background 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border-focus)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border-subtle)';
                 }}
               >
-                <span style={{ fontWeight: 500, color: '#f1f5f9', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '650px' }}>
-                  {h.question_text}
-                </span>
-                <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden' }}>
+                  <HelpCircle size={15} color="var(--text-muted)" shrink={0} />
+                  <span style={{
+                    fontWeight: 500,
+                    color: 'var(--text-primary)',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    maxWidth: '650px',
+                  }}>
+                    {h.question_text}
+                  </span>
+                </div>
+                <span style={{
+                  color: 'var(--text-muted)',
+                  fontSize: '0.74rem',
+                  fontFamily: 'var(--font-mono)',
+                  shrink: 0,
+                }}>
                   {new Date(h.created_at).toLocaleDateString()}
                 </span>
               </div>
